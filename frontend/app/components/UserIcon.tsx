@@ -9,7 +9,7 @@ export default function UserIcon({ iconPath, displayName, className }: Props) {
 		<img
 			src={
 				process.env.NODE_ENV === "development"
-					? `http://localhost:8002/iosdc-japan/2024/code-battle${iconPath}`
+					? `http://localhost:8003/iosdc-japan/2024/code-battle${iconPath}`
 					: `/iosdc-japan/2024/code-battle${iconPath}`
 			}
 			alt={`${displayName} のアイコン`}

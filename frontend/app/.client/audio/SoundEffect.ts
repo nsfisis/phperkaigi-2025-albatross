@@ -14,7 +14,7 @@ export type SoundEffect =
 
 const BASE_URL =
 	process.env.NODE_ENV === "development"
-		? `http://localhost:8002/iosdc-japan/2024/code-battle/files/audio`
+		? `http://localhost:8003/iosdc-japan/2024/code-battle/files/audio`
 		: `/iosdc-japan/2024/code-battle/files/audio`;
 
 export function getFileUrl(soundEffect: SoundEffect): string {

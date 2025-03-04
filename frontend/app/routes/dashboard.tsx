@@ -86,7 +86,7 @@ export default function Dashboard() {
 				<a
 					href={
 						process.env.NODE_ENV === "development"
-							? "http://localhost:8002/iosdc-japan/2024/code-battle/admin/dashboard"
+							? "http://localhost:8003/iosdc-japan/2024/code-battle/admin/dashboard"
 							: "/iosdc-japan/2024/code-battle/admin/dashboard"
 					}
 					className="text-lg text-white bg-pink-600 px-4 py-2 rounded transition duration-300 hover:bg-pink-500 focus:ring focus:ring-pink-400 focus:outline-none"
