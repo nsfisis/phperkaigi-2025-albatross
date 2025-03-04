@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { apiGetGames } from "../.server/api/client";
 import { ensureUserLoggedIn } from "../.server/auth";
+import { apiGetGames } from "../api/client";
 import BorderedContainer from "../components/BorderedContainer";
 import NavigateLink from "../components/NavigateLink";
 import UserIcon from "../components/UserIcon";
@@ -39,7 +39,7 @@ export default function Dashboard() {
 			<BorderedContainer>
 				<div className="px-4">
 					{games.length === 0 ? (
-						<p>エントリーしている試合はありません</p>
+						<p>エントリーできる試合はありません</p>
 					) : (
 						<ul className="divide-y">
 							{games.map((game) => (
@@ -58,15 +58,12 @@ export default function Dashboard() {
 										</span>
 									</div>
 									<span>
-										{game.state === "closed" || game.state === "finished" ? (
-											<span className="text-lg text-gray-400 bg-gray-200 px-4 py-2 rounded">
-												入室
-											</span>
-										) : (
-											<NavigateLink to={`/golf/${game.game_id}/play`}>
-												入室
-											</NavigateLink>
-										)}
+										<NavigateLink to={`/golf/${game.game_id}/play`}>
+											対戦
+										</NavigateLink>
+										<NavigateLink to={`/golf/${game.game_id}/watch`}>
+											観戦
+										</NavigateLink>
 									</span>
 								</li>
 							))}

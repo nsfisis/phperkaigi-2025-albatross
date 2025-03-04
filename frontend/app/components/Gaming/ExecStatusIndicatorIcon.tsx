@@ -1,20 +1,19 @@
 import {
-	faBan,
 	faCircle,
 	faCircleCheck,
 	faCircleExclamation,
 	faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { ExecResultStatus } from "../../types/ExecResult";
+import type { components } from "../../api/schema";
 
 type Props = {
-	status: ExecResultStatus;
+	status: components["schemas"]["ExecutionStatus"];
 };
 
 export default function ExecStatusIndicatorIcon({ status }: Props) {
 	switch (status) {
-		case "waiting_submission":
+		case "none":
 			return (
 				<FontAwesomeIcon icon={faCircle} fixedWidth className="text-gray-400" />
 			);
@@ -34,10 +33,6 @@ export default function ExecStatusIndicatorIcon({ status }: Props) {
 					fixedWidth
 					className="text-sky-500"
 				/>
-			);
-		case "canceled":
-			return (
-				<FontAwesomeIcon icon={faBan} fixedWidth className="text-gray-400" />
 			);
 		default:
 			return (

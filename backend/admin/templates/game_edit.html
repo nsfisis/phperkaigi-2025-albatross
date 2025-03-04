@@ -22,13 +22,10 @@
     </select>
   </div>
   <div>
-    <label>State</label>
-    <select name="state" required>
-      <option value="closed"{{ if eq .Game.State "closed" }} selected{{ end }}>Closed</option>
-      <option value="waiting"{{ if eq .Game.State "waiting" }} selected{{ end }}>Waiting</option>
-      <option value="starting"{{ if eq .Game.State "starting" }} selected{{ end }}>Starting</option>
-      <option value="gaming"{{ if eq .Game.State "gaming" }} selected{{ end }}>Gaming</option>
-      <option value="finished"{{ if eq .Game.State "finished" }} selected{{ end }}>Finished</option>
+    <label>Is Public</label>
+    <select name="is_public" required>
+      <option value="public"{{ if .Game.IsPublic }} selected{{ end }}>Public</option>
+      <option value="private"{{ if not .Game.IsPublic }} selected{{ end }}>Private</option>
     </select>
   </div>
   <div>

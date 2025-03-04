@@ -2,8 +2,6 @@ package taskqueue
 
 import (
 	"github.com/hibiken/asynq"
-
-	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
 )
 
 type WorkerServer struct {
@@ -11,14 +9,14 @@ type WorkerServer struct {
 	processor *processorWrapper
 }
 
-func NewWorkerServer(redisAddr string, queries *db.Queries) *WorkerServer {
+func NewWorkerServer(redisAddr string) *WorkerServer {
 	server := asynq.NewServer(
 		asynq.RedisClientOpt{
 			Addr: redisAddr,
 		},
 		asynq.Config{},
 	)
-	processor := newProcessorWrapper(newProcessor(queries))
+	processor := newProcessorWrapper(newProcessor())
 	return &WorkerServer{
 		server:    server,
 		processor: processor,
@@ -28,9 +26,6 @@ func NewWorkerServer(redisAddr string, queries *db.Queries) *WorkerServer {
 func (s *WorkerServer) Run() error {
 	mux := asynq.NewServeMux()
 
-	mux.HandleFunc(string(TaskTypeCreateSubmissionRecord), s.processor.processTaskCreateSubmissionRecord)
-	mux.HandleFunc(string(TaskTypeCompileSwiftToWasm), s.processor.processTaskCompileSwiftToWasm)
-	mux.HandleFunc(string(TaskTypeCompileWasmToNativeExecutable), s.processor.processTaskCompileWasmToNativeExecutable)
 	mux.HandleFunc(string(TaskTypeRunTestcase), s.processor.processTaskRunTestcase)
 
 	return s.server.Run(mux)

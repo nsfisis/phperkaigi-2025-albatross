@@ -117,11 +117,11 @@ type HandlerWrapper struct {
 	impl Handler
 }
 
-func NewHandler(queries *db.Queries, hubs GameHubsInterface) *HandlerWrapper {
+func NewHandler(queries *db.Queries, hub GameHubInterface) *HandlerWrapper {
 	return &HandlerWrapper{
 		impl: Handler{
 			q:    queries,
-			hubs: hubs,
+			hub:  hub,
 		},
 	}
 }
