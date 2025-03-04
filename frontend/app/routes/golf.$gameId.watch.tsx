@@ -20,8 +20,8 @@ import { PlayerState } from "../types/PlayerState";
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
 	{
 		title: data
-			? `Golf Watching ${data.game.display_name} | iOSDC Japan 2024 Albatross.swift`
-			: "Golf Watching | iOSDC Japan 2024 Albatross.swift",
+			? `Golf Watching ${data.game.display_name} | PHPerKaigi 2025 Albatross`
+			: "Golf Watching | PHPerKaigi 2025 Albatross",
 	},
 ];
 

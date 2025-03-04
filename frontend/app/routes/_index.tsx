@@ -4,7 +4,7 @@ import BorderedContainer from "../components/BorderedContainer";
 import NavigateLink from "../components/NavigateLink";
 
 export const meta: MetaFunction = () => [
-	{ title: "iOSDC Japan 2024 Albatross.swift" },
+	{ title: "PHPerKaigi 2025 Albatross" },
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {

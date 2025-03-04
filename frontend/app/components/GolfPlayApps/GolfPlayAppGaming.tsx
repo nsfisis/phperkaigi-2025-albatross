@@ -55,7 +55,7 @@ export default function GolfPlayAppGaming({
 
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
-			<div className="text-white bg-iosdc-japan flex flex-row justify-between px-4 py-2">
+			<div className="text-white bg-sky-600 flex flex-row justify-between px-4 py-2">
 				<div className="font-bold">
 					<div className="text-gray-100">{gameDisplayName}</div>
 					<div className="text-2xl">{leftTime}</div>

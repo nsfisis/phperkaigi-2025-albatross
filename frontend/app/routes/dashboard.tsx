@@ -7,7 +7,7 @@ import NavigateLink from "../components/NavigateLink";
 import UserIcon from "../components/UserIcon";
 
 export const meta: MetaFunction = () => [
-	{ title: "Dashboard | iOSDC Japan 2024 Albatross.swift" },
+	{ title: "Dashboard | PHPerKaigi 2025 Albatross" },
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
