@@ -77,7 +77,7 @@ export default function Login() {
 							のアカウントをお持ちでない場合は、イベントスタッフにお声がけください。
 						</p>
 						{loginErrors?.message && (
-							<p className="text-red-500 text-sm mb-4">{loginErrors.message}</p>
+							<p className="text-sky-500 text-sm mb-4">{loginErrors.message}</p>
 						)}
 						<div className="mb-4 flex flex-col gap-1">
 							<label

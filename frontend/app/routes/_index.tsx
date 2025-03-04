@@ -21,7 +21,7 @@ export default function Index() {
 				className="w-64 h-64"
 			/>
 			<div className="text-center">
-				<div className="font-bold text-transparent text-sky-50 flex flex-col gap-y-2">
+				<div className="font-bold text-sky-50 flex flex-col gap-y-2">
 					<div className="text-5xl">PHPER CODE BATTLE</div>
 				</div>
 			</div>
