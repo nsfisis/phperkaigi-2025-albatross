@@ -38,7 +38,7 @@ func main() {
 		log.Fatalf("Error loading env %v", err)
 	}
 
-	openAPISpec, err := api.GetSwaggerWithPrefix("/iosdc-japan/2024/code-battle/api")
+	openAPISpec, err := api.GetSwaggerWithPrefix("/phperkaigi/2025/code-battle/api")
 	if err != nil {
 		log.Fatalf("Error loading OpenAPI spec\n: %s", err)
 	}
@@ -69,7 +69,7 @@ func main() {
 		log.Fatalf("Error restoring game hubs from db %v", err)
 	}
 	defer gameHubs.Close()
-	sockGroup := e.Group("/iosdc-japan/2024/code-battle/sock")
+	sockGroup := e.Group("/phperkaigi/2025/code-battle/sock")
 	sockHandler := gameHubs.SockHandler()
 	sockGroup.GET("/golf/:gameID/play", func(c echo.Context) error {
 		return sockHandler.HandleSockGolfPlay(c)
@@ -78,19 +78,19 @@ func main() {
 		return sockHandler.HandleSockGolfWatch(c)
 	})
 
-	apiGroup := e.Group("/iosdc-japan/2024/code-battle/api")
+	apiGroup := e.Group("/phperkaigi/2025/code-battle/api")
 	apiGroup.Use(oapimiddleware.OapiRequestValidator(openAPISpec))
 	apiHandler := api.NewHandler(queries, gameHubs)
 	api.RegisterHandlers(apiGroup, api.NewStrictHandler(apiHandler, nil))
 
 	adminHandler := admin.NewHandler(queries, gameHubs)
-	adminGroup := e.Group("/iosdc-japan/2024/code-battle/admin")
+	adminGroup := e.Group("/phperkaigi/2025/code-battle/admin")
 	adminHandler.RegisterHandlers(adminGroup)
 
 	if config.isLocal {
 		// For local dev: This is never used in production because the reverse
 		// proxy directly handles /files.
-		filesGroup := e.Group("/iosdc-japan/2024/code-battle/files")
+		filesGroup := e.Group("/phperkaigi/2025/code-battle/files")
 		filesGroup.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 			Root:       "/",
 			Filesystem: http.Dir("/data/files"),
@@ -99,10 +99,10 @@ func main() {
 
 		// For local dev: This is never used in production because the reverse
 		// proxy sends these paths to the app server.
-		e.GET("/iosdc-japan/2024/code-battle/*", func(c echo.Context) error {
+		e.GET("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
-		e.POST("/iosdc-japan/2024/code-battle/*", func(c echo.Context) error {
+		e.POST("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
 	}

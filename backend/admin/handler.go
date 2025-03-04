@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	basePath = "/iosdc-japan/2024/code-battle"
+	basePath = "/phperkaigi/2025/code-battle"
 )
 
 var jst = time.FixedZone("Asia/Tokyo", 9*60*60)

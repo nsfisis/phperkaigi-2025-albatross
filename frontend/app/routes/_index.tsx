@@ -16,7 +16,7 @@ export default function Index() {
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-y-6">
 			<img
-				src="/iosdc-japan/2024/code-battle/favicon.svg"
+				src="/phperkaigi/2025/code-battle/favicon.svg"
 				alt="iOSDC Japan 2024"
 				className="w-24 h-24"
 			/>

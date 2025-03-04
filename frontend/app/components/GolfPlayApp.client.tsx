@@ -42,8 +42,8 @@ export default function GolfPlayApp({
 }: Props) {
 	const socketUrl =
 		process.env.NODE_ENV === "development"
-			? `ws://localhost:8003/iosdc-japan/2024/code-battle/sock/golf/${game.game_id}/play?token=${sockToken}`
-			: `wss://t.nil.ninja/iosdc-japan/2024/code-battle/sock/golf/${game.game_id}/play?token=${sockToken}`;
+			? `ws://localhost:8003/phperkaigi/2025/code-battle/sock/golf/${game.game_id}/play?token=${sockToken}`
+			: `wss://t.nil.ninja/phperkaigi/2025/code-battle/sock/golf/${game.game_id}/play?token=${sockToken}`;
 
 	const gameStateKind = useAtomValue(gameStateKindAtom);
 	const setCurrentTimestamp = useSetAtom(setCurrentTimestampAtom);

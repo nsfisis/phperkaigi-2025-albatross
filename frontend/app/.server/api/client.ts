@@ -4,8 +4,8 @@ import type { paths } from "./schema";
 const apiClient = createClient<paths>({
 	baseUrl:
 		process.env.NODE_ENV === "development"
-			? "http://localhost:8003/iosdc-japan/2024/code-battle/api/"
-			: "http://api-server/iosdc-japan/2024/code-battle/api/",
+			? "http://localhost:8003/phperkaigi/2025/code-battle/api/"
+			: "http://api-server/phperkaigi/2025/code-battle/api/",
 });
 
 export async function apiPostLogin(
