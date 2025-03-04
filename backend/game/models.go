@@ -3,7 +3,7 @@ package game
 import (
 	"time"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/api"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/api"
 )
 
 type gameType = api.GameGameType

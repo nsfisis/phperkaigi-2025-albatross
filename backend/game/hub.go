@@ -13,9 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/oapi-codegen/nullable"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/api"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/taskqueue"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/api"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/taskqueue"
 )
 
 type gameHub struct {

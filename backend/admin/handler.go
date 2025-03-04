@@ -12,9 +12,9 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/account"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/auth"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/account"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/auth"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
 )
 
 const (
