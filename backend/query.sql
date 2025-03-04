@@ -32,12 +32,6 @@ LIMIT 1;
 INSERT INTO user_auths (user_id, auth_type)
 VALUES ($1, $2);
 
--- name: IsRegistrationTokenValid :one
-SELECT EXISTS (
-    SELECT 1 FROM registration_tokens
-    WHERE token = $1
-);
-
 -- name: ListGames :many
 SELECT * FROM games
 JOIN problems ON games.problem_id = problems.problem_id

@@ -311,9 +311,8 @@ type GetGameParams struct {
 
 // PostLoginJSONBody defines parameters for PostLogin.
 type PostLoginJSONBody struct {
-	Password          string  `json:"password"`
-	RegistrationToken *string `json:"registration_token,omitempty"`
-	Username          string  `json:"username"`
+	Password string `json:"password"`
+	Username string `json:"username"`
 }
 
 // GetTokenParams defines parameters for GetToken.
@@ -1186,9 +1185,8 @@ var swaggerSpec = []string{
 	"16CuzQbfGfc3vKwVWwa1PwdIb7dm7KPhcK+Br0uvHHqnoZmZUlaGZjUjJdmQBXeM/J5I5fG5ZyVSH50P",
 	"T5sg5D4P3OGzFjprFyrN6HWdTKIIi/UGQmY/9bNUDh6zsVjaltSecuq3yjm/2DgCB7plvibTnRJ9aUL8",
 	"zTKsJc7bJfKfariUuAbl4QywpgTlC1sNYy5rmHDDpXpvttjggFSvebh+Qj5iLOWKi3DrbTx7ejo6qyvb",
-	"AhZEqmw+q/g/sHVBPmz9q9PxxArNNgcig1/PDPfnRGmvTG7y+6T0f3sLaJR0ofXEdj/zhNK1pykLTGmo",
-	"G9buTXWHh7of8Cz5DA9z55oK0iez4TneMt9VXmx9kEsu1EtK7iH0sDHnWYBpmqb/BQAA//+vy4pZ5ycA",
-	"AA==",
+	"T6yubEPmzHR9Vt2fAqW9slDxf2DrUn/Q/05K/7e3b0ZJF0pObOcyTyhde5puwJSGumHc3jR1OKTvcs8S",
+	"x3Aod66pmHwyG57jDfFd5cWebbnkQr2k5B5CDxtzngWYpmn6XwAAAP//wKRGKaMnAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

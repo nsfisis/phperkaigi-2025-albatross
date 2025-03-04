@@ -8,18 +8,11 @@ const apiClient = createClient<paths>({
 			: "http://api-server/phperkaigi/2025/code-battle/api/",
 });
 
-export async function apiPostLogin(
-	username: string,
-	password: string,
-	registrationToken: string | null,
-) {
+export async function apiPostLogin(username: string, password: string) {
 	const { data, error } = await apiClient.POST("/login", {
 		body: {
 			username,
 			password,
-			...(registrationToken !== null
-				? { registration_token: registrationToken }
-				: {}),
 		},
 	});
 	if (error) throw new Error(error.message);

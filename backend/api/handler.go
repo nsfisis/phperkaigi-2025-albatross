@@ -27,16 +27,11 @@ type GameHubsInterface interface {
 func (h *Handler) PostLogin(ctx context.Context, request PostLoginRequestObject) (PostLoginResponseObject, error) {
 	username := request.Body.Username
 	password := request.Body.Password
-	registrationToken := request.Body.RegistrationToken
-	userID, err := auth.Login(ctx, h.q, username, password, registrationToken)
+	userID, err := auth.Login(ctx, h.q, username, password)
 	if err != nil {
 		log.Printf("login failed: %v", err)
 		var msg string
-		if errors.Is(err, auth.ErrInvalidRegistrationToken) {
-			msg = "登録用 URL が無効です。イベントスタッフにお声がけください"
-		} else if errors.Is(err, auth.ErrNoRegistrationToken) {
-			msg = "登録用 URL からログインしてください。登録用 URL は Connpass のイベントページに記載しています"
-		} else if errors.Is(err, auth.ErrForteeLoginTimeout) {
+		if errors.Is(err, auth.ErrForteeLoginTimeout) {
 			msg = "ログインに失敗しました"
 		} else {
 			msg = "ユーザー名またはパスワードが誤っています"

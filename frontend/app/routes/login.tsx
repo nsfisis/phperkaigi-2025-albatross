@@ -3,7 +3,7 @@ import type {
 	LoaderFunctionArgs,
 	MetaFunction,
 } from "@remix-run/node";
-import { Form, json, useActionData, useLocation } from "@remix-run/react";
+import { Form, json, useActionData } from "@remix-run/react";
 import { ensureUserNotLoggedIn, login } from "../.server/auth";
 import BorderedContainer from "../components/BorderedContainer";
 import InputText from "../components/InputText";
@@ -58,10 +58,6 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Login() {
-	const location = useLocation();
-	const searchParams = new URLSearchParams(location.search);
-	const registrationToken = searchParams.get("registration_token");
-
 	const loginErrors = useActionData<typeof action>();
 
 	return (
@@ -113,11 +109,6 @@ export default function Login() {
 								</p>
 							)}
 						</div>
-						<input
-							type="hidden"
-							name="registration_token"
-							value={registrationToken ?? ""}
-						/>
 						<div className="flex justify-center">
 							<SubmitButton type="submit">ログイン</SubmitButton>
 						</div>

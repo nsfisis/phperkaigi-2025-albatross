@@ -258,20 +258,6 @@ func (q *Queries) GetUserIDByUsername(ctx context.Context, username string) (int
 	return user_id, err
 }
 
-const isRegistrationTokenValid = `-- name: IsRegistrationTokenValid :one
-SELECT EXISTS (
-    SELECT 1 FROM registration_tokens
-    WHERE token = $1
-)
-`
-
-func (q *Queries) IsRegistrationTokenValid(ctx context.Context, token string) (bool, error) {
-	row := q.db.QueryRow(ctx, isRegistrationTokenValid, token)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
-}
-
 const listGamePlayers = `-- name: ListGamePlayers :many
 SELECT game_id, game_players.user_id, users.user_id, username, display_name, icon_path, is_admin, created_at FROM game_players
 JOIN users ON game_players.user_id = users.user_id

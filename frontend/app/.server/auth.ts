@@ -14,14 +14,7 @@ authenticator.use(
 	new FormStrategy(async ({ form }) => {
 		const username = String(form.get("username"));
 		const password = String(form.get("password"));
-		const registrationToken = String(form.get("registration_token"));
-		return (
-			await apiPostLogin(
-				username,
-				password,
-				registrationToken === "" ? null : registrationToken,
-			)
-		).token;
+		return (await apiPostLogin(username, password)).token;
 	}),
 	"default",
 );
