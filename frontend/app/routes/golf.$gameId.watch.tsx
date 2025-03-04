@@ -3,7 +3,7 @@ import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
 import { useHydrateAtoms } from "jotai/utils";
 import { apiGetGame, apiGetToken } from "../.server/api/client";
 import { ensureUserLoggedIn } from "../.server/auth";
-import GolfWatchAppWithAudioPlayRequest from "../components/GolfWatchAppWithAudioPlayRequest.client";
+import GolfWatchApp from "../components/GolfWatchApp.client";
 import GolfWatchAppConnecting from "../components/GolfWatchApps/GolfWatchAppConnecting";
 import {
 	codeAAtom,
@@ -183,5 +183,5 @@ export default function GolfWatch() {
 		[submitResultBAtom, playerStateB.submitResult],
 	]);
 
-	return <GolfWatchAppWithAudioPlayRequest game={game} sockToken={sockToken} />;
+	return <GolfWatchApp game={game} sockToken={sockToken} />;
 }
