@@ -30,11 +30,11 @@ export default function GolfWatchAppGaming1v1({
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const latestGameStates = useAtomValue(latestGameStatesAtom);
 
-	const stateA = latestGameStates[playerProfileA.id];
+	const stateA = latestGameStates[`${playerProfileA.id}`];
 	const codeA = stateA?.code ?? "";
 	const scoreA = stateA?.score ?? null;
 	const statusA = stateA?.status ?? "none";
-	const stateB = latestGameStates[playerProfileB.id];
+	const stateB = latestGameStates[`${playerProfileB.id}`];
 	const codeB = stateB?.code ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";

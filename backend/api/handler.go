@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v4"
@@ -230,7 +231,7 @@ func (h *Handler) GetGameWatchLatestStates(ctx context.Context, request GetGameW
 		} else {
 			status = None
 		}
-		states[string(row.UserID)] = LatestGameState{
+		states[strconv.Itoa(int(row.UserID))] = LatestGameState{
 			Code:   code,
 			Score:  score,
 			Status: status,
