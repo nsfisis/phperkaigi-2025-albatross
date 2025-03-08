@@ -13,47 +13,34 @@ VALUES
     (3, 'password', '$2a$10$F/TePpu1pyJRWgn0e6A14.VL9D/17sRxT/2DyZ2Oi4Eg/lR6n7JcK');
 
 INSERT INTO problems
-(title, description)
+(title, description, sample_code)
 VALUES
-    ('TEST problem 1', 'This is TEST problem 1'),
-    ('TEST problem 2', 'This is TEST problem 2'),
-    ('TEST problem 3', 'This is TEST problem 3'),
-    ('TEST problem 4', 'This is TEST problem 4'),
-    ('TEST problem 5', 'This is TEST problem 5'),
-    ('TEST problem 6', 'This is TEST problem 6'),
-    ('TEST problem 7', 'This is TEST problem 7');
+    ('TEST problem 1', 'This is TEST problem 1', 'sample code'),
+    ('TEST problem 2', 'This is TEST problem 2', 'sample code'),
+    ('TEST problem 3', 'This is TEST problem 3', 'sample code'),
+    ('TEST problem 4', 'This is TEST problem 4', 'sample code'),
+    ('TEST problem 5', 'This is TEST problem 5', 'sample code'),
+    ('TEST problem 6', 'This is TEST problem 6', 'sample code'),
+    ('TEST problem 7', 'This is TEST problem 7', 'sample code');
 
 INSERT INTO games
-(game_type, state, display_name, duration_seconds, problem_id)
+(game_type, is_public, display_name, duration_seconds, problem_id)
 VALUES
-    ('1v1',         'waiting',  'TEST game 1', 180, 1),
-    ('1v1',         'closed',   'TEST game 2', 180, 2),
-    ('1v1',         'finished', 'TEST game 3', 180, 3),
-    ('multiplayer', 'waiting',  'TEST game 4', 180, 4),
-    ('multiplayer', 'closed',   'TEST game 5', 180, 5),
-    ('multiplayer', 'finished', 'TEST game 6', 180, 6),
-    ('multiplayer', 'waiting',  'TEST game 7', 180, 7);
-
-INSERT INTO game_players
-(game_id, user_id)
-VALUES
-    (1, 1),
-    (1, 2),
-    (2, 1),
-    (2, 2),
-    (3, 1),
-    (3, 2),
-    (4, 1),
-    (4, 2),
-    (5, 1),
-    (5, 2),
-    (6, 1),
-    (6, 2),
-    (7, 1);
+    ('1v1',         true,  'TEST game 1', 180, 1),
+    ('1v1',         false, 'TEST game 2', 180, 2),
+    ('1v1',         false, 'TEST game 3', 180, 3),
+    ('multiplayer', true,  'TEST game 4', 180, 4),
+    ('multiplayer', false, 'TEST game 5', 180, 5),
+    ('multiplayer', false, 'TEST game 6', 180, 6),
+    ('multiplayer', true,  'TEST game 7', 180, 7);
 
 INSERT INTO testcases
 (problem_id, stdin, stdout)
 VALUES
     (1, '', '42'),
+    (2, '', '42'),
+    (3, '', '42'),
     (4, '', '42'),
+    (5, '', '42'),
+    (6, '', '42'),
     (7, '', '42');

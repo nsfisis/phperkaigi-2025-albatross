@@ -32,22 +32,15 @@ LIMIT 1;
 INSERT INTO user_auths (user_id, auth_type)
 VALUES ($1, $2);
 
--- name: ListGames :many
+-- name: ListPublicGames :many
 SELECT * FROM games
 JOIN problems ON games.problem_id = problems.problem_id
+WHERE is_public = true
 ORDER BY games.game_id;
 
--- name: ListGamesForPlayer :many
+-- name: ListAllGames :many
 SELECT * FROM games
-JOIN problems ON games.problem_id = problems.problem_id
-JOIN game_players ON games.game_id = game_players.game_id
-WHERE game_players.user_id = $1
 ORDER BY games.game_id;
-
--- name: UpdateGameState :exec
-UPDATE games
-SET state = $2
-WHERE game_id = $1;
 
 -- name: UpdateGameStartedAt :exec
 UPDATE games
@@ -60,27 +53,27 @@ JOIN problems ON games.problem_id = problems.problem_id
 WHERE games.game_id = $1
 LIMIT 1;
 
--- name: ListGamePlayers :many
-SELECT * FROM game_players
-JOIN users ON game_players.user_id = users.user_id
-WHERE game_players.game_id = $1
-ORDER BY game_players.user_id;
-
 -- name: UpdateGame :exec
 UPDATE games
 SET
     game_type = $2,
-    state = $3,
+    is_public = $3,
     display_name = $4,
     duration_seconds = $5,
     started_at = $6,
     problem_id = $7
 WHERE game_id = $1;
 
--- name: CreateSubmission :one
-INSERT INTO submissions (game_id, user_id, code, code_size, code_hash)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING submission_id;
+-- name: ListMainPlayers :many
+SELECT * FROM game_main_players
+JOIN users ON game_main_players.user_id = users.user_id
+WHERE game_main_players.game_id = ANY($1::INT[])
+ORDER BY game_main_players.user_id;
+
+-- name: ListMainPlayerIDs :many
+SELECT user_id FROM game_main_players
+WHERE game_id = $1
+ORDER BY user_id;
 
 -- name: GetSubmissionCodeSizeByID :one
 SELECT code_size FROM submissions
@@ -96,10 +89,6 @@ ORDER BY testcases.testcase_id;
 SELECT testcases.testcase_id FROM testcases
 WHERE testcases.problem_id = (SELECT problem_id FROM games WHERE game_id = $1)
 ORDER BY testcases.testcase_id;
-
--- name: CreateSubmissionResult :exec
-INSERT INTO submission_results (submission_id, status, stdout, stderr)
-VALUES ($1, $2, $3, $4);
 
 -- name: CreateTestcaseResult :exec
 INSERT INTO testcase_results (submission_id, testcase_id, status, stdout, stderr)
@@ -118,3 +107,53 @@ SELECT
 FROM testcases
 LEFT JOIN testcase_results AS r ON testcases.testcase_id = r.testcase_id
 WHERE r.submission_id = $1;
+
+-- name: GetLatestState :one
+SELECT * FROM game_states
+LEFT JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
+WHERE game_states.game_id = $1 AND game_states.user_id = $2
+LIMIT 1;
+
+-- name: GetLatestStatesOfMainPlayers :many
+SELECT * FROM game_main_players
+LEFT JOIN game_states ON game_main_players.game_id = game_states.game_id AND game_main_players.user_id = game_states.user_id
+LEFT JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
+WHERE game_main_players.game_id = $1;
+
+-- name: GetRanking :many
+SELECT * FROM game_states
+JOIN users ON game_states.user_id = users.user_id
+JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
+WHERE game_states.game_id = $1
+ORDER BY submissions.code_size ASC, submissions.created_at ASC;
+
+-- name: UpdateCode :exec
+INSERT INTO game_states (game_id, user_id, code, status)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (game_id, user_id)
+DO UPDATE SET code = EXCLUDED.code;
+
+-- name: CreateSubmission :one
+INSERT INTO submissions (game_id, user_id, code, code_size, status)
+VALUES ($1, $2, $3, $4, 'running')
+RETURNING submission_id;
+
+-- name: UpdateSubmissionStatus :exec
+UPDATE submissions
+SET status = $2
+WHERE submission_id = $1;
+
+-- name: UpdateGameStateStatus :exec
+UPDATE game_states
+SET status = $3
+WHERE game_id = $1 AND user_id = $2;
+
+-- name: SyncGameStateBestScoreSubmission :exec
+UPDATE game_states
+SET best_score_submission_id = (
+    SELECT submission_id FROM submissions AS s
+    WHERE s.game_id = $1 AND s.user_id = $2 AND s.status = 'success'
+    ORDER BY s.code_size ASC, s.created_at ASC
+    LIMIT 1
+)
+WHERE game_id = $1 AND user_id = $2;

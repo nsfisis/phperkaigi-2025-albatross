@@ -1,12 +1,7 @@
 import { useAtomValue } from "jotai";
 import {
-	codeAAtom,
-	codeBAtom,
 	gamingLeftTimeSecondsAtom,
-	scoreAAtom,
-	scoreBAtom,
-	submitResultAAtom,
-	submitResultBAtom,
+	latestGameStatesAtom,
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";
@@ -33,12 +28,16 @@ export default function GolfWatchAppGaming({
 	gameResult,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
-	const codeA = useAtomValue(codeAAtom);
-	const codeB = useAtomValue(codeBAtom);
-	const scoreA = useAtomValue(scoreAAtom);
-	const scoreB = useAtomValue(scoreBAtom);
-	const submitResultA = useAtomValue(submitResultAAtom);
-	const submitResultB = useAtomValue(submitResultBAtom);
+	const latestGameStates = useAtomValue(latestGameStatesAtom);
+
+	const stateA = latestGameStates[playerProfileA.id]!;
+	const codeA = stateA.code;
+	const scoreA = stateA.score;
+	const statusA = stateA.status;
+	const stateB = latestGameStates[playerProfileB.id]!;
+	const codeB = stateB.code;
+	const scoreB = stateB.score;
+	const statusB = stateB.status;
 
 	const leftTime = (() => {
 		const m = Math.floor(leftTimeSeconds / 60);
@@ -109,11 +108,11 @@ export default function GolfWatchAppGaming({
 				bgB="bg-purple-400"
 			/>
 			<div className="grow grid grid-cols-3 p-4 gap-4">
-				<CodeBlock code={codeA} language="swift" />
+				<CodeBlock code={codeA} language="php" />
 				<div className="flex flex-col gap-4">
 					<div className="grid grid-cols-2 gap-4">
-						<SubmitResult result={submitResultA} />
-						<SubmitResult result={submitResultB} />
+						<SubmitResult status={statusA} />
+						<SubmitResult status={statusB} />
 					</div>
 					<div>
 						<div className="mb-2 text-center text-xl font-bold">
@@ -122,7 +121,7 @@ export default function GolfWatchAppGaming({
 						<BorderedContainer>{problemDescription}</BorderedContainer>
 					</div>
 				</div>
-				<CodeBlock code={codeB} language="swift" />
+				<CodeBlock code={codeB} language="php" />
 			</div>
 		</div>
 	);

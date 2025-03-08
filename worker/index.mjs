@@ -27,6 +27,7 @@ const execPhp = (code, input, timeoutMsec) => {
 const app = new Hono();
 
 app.post("/exec", async (c) => {
+	console.log("worker/exec");
 	const { code, stdin, max_duration_ms } = await c.req.json();
 	const result = await execPhp(code, stdin, max_duration_ms);
 	return c.json(result);

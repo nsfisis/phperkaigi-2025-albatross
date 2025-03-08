@@ -20,13 +20,14 @@ CREATE INDEX idx_user_auths_user_id ON user_auths(user_id);
 CREATE TABLE problems (
     problem_id  SERIAL       PRIMARY KEY,
     title       VARCHAR(255) NOT NULL,
-    description TEXT         NOT NULL
+    description TEXT         NOT NULL,
+    sample_code TEXT         NOT NULL
 );
 
 CREATE TABLE games (
     game_id          SERIAL       PRIMARY KEY,
     game_type        VARCHAR(16)  NOT NULL,
-    state            VARCHAR(32)  NOT NULL,
+    is_public        BOOLEAN      NOT NULL,
     display_name     VARCHAR(255) NOT NULL,
     duration_seconds INT          NOT NULL,
     created_at       TIMESTAMP    NOT NULL DEFAULT NOW(),
@@ -36,12 +37,24 @@ CREATE TABLE games (
 );
 CREATE INDEX idx_games_problem_id ON games(problem_id);
 
-CREATE TABLE game_players (
+CREATE TABLE game_main_players (
     game_id INT NOT NULL,
     user_id INT NOT NULL,
     PRIMARY KEY (game_id, user_id),
     CONSTRAINT fk_game_id FOREIGN KEY(game_id) REFERENCES games(game_id),
     CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE game_states (
+    game_id INT NOT NULL,
+    user_id INT NOT NULL,
+    code TEXT NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    best_score_submission_id INT,
+    PRIMARY KEY (game_id, user_id),
+    CONSTRAINT fk_game_id FOREIGN KEY(game_id) REFERENCES games(game_id),
+    CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_best_score_submission_id FOREIGN KEY(best_score_submission_id) REFERENCES submissions(submission_id)
 );
 
 CREATE TABLE testcases (
@@ -54,27 +67,17 @@ CREATE TABLE testcases (
 CREATE INDEX idx_testcases_problem_id ON testcases(problem_id);
 
 CREATE TABLE submissions (
-    submission_id SERIAL    PRIMARY KEY,
-    game_id       INT       NOT NULL,
-    user_id       INT       NOT NULL,
-    code          TEXT      NOT NULL,
-    code_size     INT       NOT NULL,
-    code_hash     CHAR(32)  NOT NULL,
-    created_at    TIMESTAMP NOT NULL DEFAULT NOW(),
+    submission_id SERIAL      PRIMARY KEY,
+    game_id       INT         NOT NULL,
+    user_id       INT         NOT NULL,
+    code          TEXT        NOT NULL,
+    code_size     INT         NOT NULL,
+    status        VARCHAR(16) NOT NULL,
+    created_at    TIMESTAMP   NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_game_id FOREIGN KEY(game_id) REFERENCES games(game_id),
     CONSTRAINT fk_user_id FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
-
-CREATE TABLE submission_results (
-    submission_result_id SERIAL      PRIMARY KEY,
-    submission_id        INT         NOT NULL UNIQUE,
-    status               VARCHAR(16) NOT NULL,
-    stdout               TEXT        NOT NULL,
-    stderr               TEXT        NOT NULL,
-    created_at           TIMESTAMP   NOT NULL DEFAULT NOW(),
-    CONSTRAINT fk_submission_id FOREIGN KEY(submission_id) REFERENCES submissions(submission_id)
-);
-CREATE INDEX idx_submission_results_submission_id ON submission_results(submission_id);
+CREATE INDEX idx_submissions_game_id_user_id ON submissions(game_id, user_id);
 
 CREATE TABLE testcase_results (
     testcase_result_id SERIAL      PRIMARY KEY,

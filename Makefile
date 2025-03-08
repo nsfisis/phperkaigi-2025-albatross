@@ -1,9 +1,6 @@
 DOCKER_COMPOSE := docker compose -f compose.local.yaml
 
-all: down build reset up
-
-reset:
-	echo "UPDATE games SET state = 'waiting', started_at = NULL WHERE game_id = 1;" | make psql-query
+all: down build up
 
 .PHONY: build
 build:
@@ -48,6 +45,11 @@ sqldef: down
 	${DOCKER_COMPOSE} build db
 	${DOCKER_COMPOSE} up --wait db
 	${DOCKER_COMPOSE} run --no-TTY tools psqldef < ./backend/schema.sql
+
+.PHONY: asynq
+asynq:
+	${DOCKER_COMPOSE} up --wait task-db
+	${DOCKER_COMPOSE} run tools go run github.com/hibiken/asynq/tools/asynq --uri task-db:6379 dash
 
 .PHONY: init
 init: build initdb

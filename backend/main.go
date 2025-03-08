@@ -61,29 +61,16 @@ func main() {
 	e.Use(middleware.Recover())
 
 	taskQueue := taskqueue.NewQueue("task-db:6379")
-	workerServer := taskqueue.NewWorkerServer("task-db:6379", queries)
+	workerServer := taskqueue.NewWorkerServer("task-db:6379")
 
-	gameHubs := game.NewGameHubs(queries, taskQueue, workerServer.Results())
-	err = gameHubs.RestoreFromDB(ctx)
-	if err != nil {
-		log.Fatalf("Error restoring game hubs from db %v", err)
-	}
-	defer gameHubs.Close()
-	sockGroup := e.Group("/phperkaigi/2025/code-battle/sock")
-	sockHandler := gameHubs.SockHandler()
-	sockGroup.GET("/golf/:gameID/play", func(c echo.Context) error {
-		return sockHandler.HandleSockGolfPlay(c)
-	})
-	sockGroup.GET("/golf/:gameID/watch", func(c echo.Context) error {
-		return sockHandler.HandleSockGolfWatch(c)
-	})
+	gameHub := game.NewGameHub(queries, taskQueue, workerServer)
 
 	apiGroup := e.Group("/phperkaigi/2025/code-battle/api")
 	apiGroup.Use(oapimiddleware.OapiRequestValidator(openAPISpec))
-	apiHandler := api.NewHandler(queries, gameHubs)
+	apiHandler := api.NewHandler(queries, gameHub)
 	api.RegisterHandlers(apiGroup, api.NewStrictHandler(apiHandler, nil))
 
-	adminHandler := admin.NewHandler(queries, gameHubs)
+	adminHandler := admin.NewHandler(queries, gameHub)
 	adminGroup := e.Group("/phperkaigi/2025/code-battle/admin")
 	adminHandler.RegisterHandlers(adminGroup)
 
@@ -105,15 +92,12 @@ func main() {
 		e.POST("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
+
+		// Allow access from dev server.
+		e.Use(middleware.CORS())
 	}
 
-	go gameHubs.Run()
-
-	go func() {
-		if err := workerServer.Run(); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	go gameHub.Run()
 
 	if err := e.Start(":80"); err != http.ErrServerClosed {
 		log.Fatal(err)

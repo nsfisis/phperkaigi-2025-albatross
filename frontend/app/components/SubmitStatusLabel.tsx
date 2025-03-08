@@ -1,12 +1,12 @@
-import type { SubmitResultStatus } from "../types/SubmitResult";
+import type { components } from "../api/schema";
 
 type Props = {
-	status: SubmitResultStatus;
+	status: components["schemas"]["ExecutionStatus"];
 };
 
 export default function SubmitStatusLabel({ status }: Props) {
 	switch (status) {
-		case "waiting_submission":
+		case "none":
 			return "提出待ち";
 		case "running":
 			return "実行中...";
@@ -16,8 +16,6 @@ export default function SubmitStatusLabel({ status }: Props) {
 			return "テスト失敗";
 		case "timeout":
 			return "時間切れ";
-		case "compile_error":
-			return "コンパイルエラー";
 		case "runtime_error":
 			return "実行時エラー";
 		case "internal_error":
