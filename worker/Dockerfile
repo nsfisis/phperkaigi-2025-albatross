@@ -1,21 +1,80 @@
-FROM golang:1.22.3 AS builder
+FROM emscripten/emsdk:3.1.74 AS wasm-builder
 
-WORKDIR /build
+RUN git clone --depth=1 --branch=php-8.4.4 https://github.com/php/php-src
 
-RUN apt-get update && apt-get install -y curl xz-utils
-RUN curl https://wasmtime.dev/install.sh -sSf | bash -s -- --version v23.0.1
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        autoconf \
+        bison \
+        pkg-config \
+        re2c \
+        && \
+    :
 
-COPY go.mod go.sum ./
-RUN go mod download
-COPY *.go /build
-RUN CGO_ENABLED=0 go build -o /build/server .
+# Define ZEND_MM_ERROR=0 for suppressing munmap() errors.
+RUN cd php-src && \
+    ./buildconf --force && \
+    emconfigure ./configure \
+        --disable-all \
+        --disable-mbregex \
+        --disable-fiber-asm \
+        --disable-cli \
+        --disable-cgi \
+        --disable-phpdbg \
+        --enable-embed=static \
+        --enable-short-tags \
+        --enable-mbstring \
+        --without-iconv \
+        --without-libxml \
+        --without-pcre-jit \
+        --without-pdo-sqlite \
+        --without-sqlite3 \
+        && \
+    EMCC_CFLAGS='-s ERROR_ON_UNDEFINED_SYMBOLS=0 -D ZEND_MM_ERROR=0' emmake make -j$(nproc) && \
+    mv libs/libphp.a .. && \
+    make clean && \
+    git clean -fd && \
+    :
 
-# ################################################################################
-FROM ghcr.io/swiftwasm/swift:5.10-focal
+COPY php-wasm.c /src/
+
+RUN cd php-src && \
+    emcc \
+        -c \
+        -o php-wasm.o \
+        -I . \
+        -I TSRM \
+        -I Zend \
+        -I main \
+        ../php-wasm.c \
+        && \
+    mv php-wasm.o .. && \
+    make clean && \
+    git clean -fd && \
+    :
+
+RUN emcc \
+        -s ENVIRONMENT=node \
+        -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
+        -s EXPORTED_RUNTIME_METHODS='["ccall"]' \
+        -s EXPORT_ES6=1 \
+        -s INITIAL_MEMORY=16777216 \
+        -s INVOKE_RUN=0 \
+        -s MODULARIZE=1 \
+        -o php-wasm.js \
+        php-wasm.o \
+        libphp.a \
+    ;
+
+FROM node:22.14
 
 WORKDIR /app
+ENV NODE_ENV=production
 
-COPY --from=builder /root/.wasmtime/bin/wasmtime /usr/bin/wasmtime
-COPY --from=builder /build/server /app/server
+COPY --from=wasm-builder /src/php-wasm.js /src/php-wasm.wasm /app/
+COPY index.mjs exec.mjs package.json package-lock.json /app/
 
-CMD ["/app/server"]
+RUN npm install
+
+ENTRYPOINT ["node", "index.mjs"]
+EXPOSE 80

@@ -1,190 +1,90 @@
 import { atom } from "jotai";
-import type { components } from "../.server/api/schema";
-import type { SubmitResult } from "../types/SubmitResult";
+import type { components } from "../api/schema";
 
-type RawGameState =
-	| {
-			kind: "connecting";
-			startedAtTimestamp: null;
-	  }
-	| {
-			kind: "waiting";
-			startedAtTimestamp: null;
-	  }
-	| {
-			kind: "starting";
-			startedAtTimestamp: number;
-	  };
+const gameStartedAtAtom = atom<number | null>(null);
+export const setGameStartedAtAtom = atom(null, (_, set, value: number | null) =>
+	set(gameStartedAtAtom, value),
+);
 
-const rawGameStateAtom = atom<RawGameState>({
-	kind: "connecting",
-	startedAtTimestamp: null,
-});
-
-export type GameStateKind =
-	| "connecting"
-	| "waiting"
-	| "starting"
-	| "gaming"
-	| "finished";
+export type GameStateKind = "waiting" | "starting" | "gaming" | "finished";
+type ExecutionStatus = components["schemas"]["ExecutionStatus"];
+type LatestGameState = components["schemas"]["LatestGameState"];
 
 export const gameStateKindAtom = atom<GameStateKind>((get) => {
-	const { kind: rawKind, startedAtTimestamp } = get(rawGameStateAtom);
-	if (rawKind === "connecting" || rawKind === "waiting") {
-		return rawKind;
+	const startedAt = get(gameStartedAtAtom);
+	if (!startedAt) {
+		return "waiting";
+	}
+
+	const durationSeconds = get(durationSecondsAtom);
+	const finishedAt = startedAt + durationSeconds;
+	const now = get(currentTimestampAtom);
+	if (now < startedAt) {
+		return "starting";
+	} else if (now < finishedAt) {
+		return "gaming";
 	} else {
-		const durationSeconds = get(rawDurationSecondsAtom);
-		const finishedAtTimestamp = startedAtTimestamp + durationSeconds;
-		const currentTimestamp = get(rawCurrentTimestampAtom);
-		if (currentTimestamp < startedAtTimestamp) {
-			return "starting";
-		} else if (currentTimestamp < finishedAtTimestamp) {
-			return "gaming";
-		} else {
-			return "finished";
-		}
+		return "finished";
 	}
 });
 
-export const gameStartAtom = atom(null, (get, set, value: number) => {
-	const { kind } = get(rawGameStateAtom);
-	if (kind === "starting") {
-		return;
-	}
-	set(rawGameStateAtom, {
-		kind: "starting",
-		startedAtTimestamp: value,
-	});
-});
-export const setGameStateConnectingAtom = atom(null, (_, set) =>
-	set(rawGameStateAtom, { kind: "connecting", startedAtTimestamp: null }),
-);
-export const setGameStateWaitingAtom = atom(null, (_, set) =>
-	set(rawGameStateAtom, { kind: "waiting", startedAtTimestamp: null }),
-);
-
-const rawCurrentTimestampAtom = atom(0);
+const currentTimestampAtom = atom(0);
 export const setCurrentTimestampAtom = atom(null, (_, set) =>
-	set(rawCurrentTimestampAtom, Math.floor(Date.now() / 1000)),
+	set(currentTimestampAtom, Math.floor(Date.now() / 1000)),
 );
 
-const rawDurationSecondsAtom = atom<number>(0);
+const durationSecondsAtom = atom<number>(0);
 export const setDurationSecondsAtom = atom(null, (_, set, value: number) =>
-	set(rawDurationSecondsAtom, value),
+	set(durationSecondsAtom, value),
 );
 
 export const startingLeftTimeSecondsAtom = atom<number | null>((get) => {
-	const { startedAtTimestamp } = get(rawGameStateAtom);
-	if (startedAtTimestamp === null) {
+	const startedAt = get(gameStartedAtAtom);
+	if (startedAt === null) {
 		return null;
 	}
-	const currentTimestamp = get(rawCurrentTimestampAtom);
-	return Math.max(0, startedAtTimestamp - currentTimestamp);
+	const currentTimestamp = get(currentTimestampAtom);
+	return Math.max(0, startedAt - currentTimestamp);
 });
 
 export const gamingLeftTimeSecondsAtom = atom<number | null>((get) => {
-	const { startedAtTimestamp } = get(rawGameStateAtom);
-	if (startedAtTimestamp === null) {
+	const startedAt = get(gameStartedAtAtom);
+	if (startedAt === null) {
 		return null;
 	}
-	const durationSeconds = get(rawDurationSecondsAtom);
-	const finishedAtTimestamp = startedAtTimestamp + durationSeconds;
-	const currentTimestamp = get(rawCurrentTimestampAtom);
-	return Math.min(
-		durationSeconds,
-		Math.max(0, finishedAtTimestamp - currentTimestamp),
-	);
+	const durationSeconds = get(durationSecondsAtom);
+	const finishedAt = startedAt + durationSeconds;
+	const currentTimestamp = get(currentTimestampAtom);
+	return Math.min(durationSeconds, Math.max(0, finishedAt - currentTimestamp));
 });
 
-export const handleWsConnectionClosedAtom = atom(null, (get, set) => {
-	const kind = get(gameStateKindAtom);
-	if (kind !== "finished") {
-		set(setGameStateConnectingAtom);
+const rawStatusAtom = atom<ExecutionStatus>("none");
+const rawScoreAtom = atom<number | null>(null);
+export const statusAtom = atom<ExecutionStatus>((get) => {
+	const isSubmittingCode = get(isSubmittingCodeAtom);
+	if (isSubmittingCode) {
+		return "running";
+	} else {
+		return get(rawStatusAtom);
 	}
 });
-
-export const scoreAtom = atom<number | null>(null);
-export const submitResultAtom = atom<SubmitResult>({
-	status: "waiting_submission",
-	execResults: [],
+export const scoreAtom = atom<number | null>((get) => {
+	return get(rawScoreAtom);
 });
 
-export const handleSubmitCodeAtom = atom(null, (_, set) => {
-	set(submitResultAtom, (prev) => ({
-		status: "running",
-		execResults: prev.execResults.map((r) => ({
-			...r,
-			status: "running",
-			stdout: "",
-			stderr: "",
-		})),
-	}));
+const rawIsSubmittingCodeAtom = atom(false);
+export const isSubmittingCodeAtom = atom((get) => get(rawIsSubmittingCodeAtom));
+export const handleSubmitCodePreAtom = atom(null, (_, set) => {
+	set(rawIsSubmittingCodeAtom, true);
+});
+export const handleSubmitCodePostAtom = atom(null, (_, set) => {
+	set(rawIsSubmittingCodeAtom, false);
 });
 
-type GamePlayerMessageS2CExecResultPayload =
-	components["schemas"]["GamePlayerMessageS2CExecResultPayload"];
-type GamePlayerMessageS2CSubmitResultPayload =
-	components["schemas"]["GamePlayerMessageS2CSubmitResultPayload"];
-
-export const handleWsExecResultMessageAtom = atom(
+export const setLatestGameStateAtom = atom(
 	null,
-	(
-		get,
-		set,
-		data: GamePlayerMessageS2CExecResultPayload,
-		callback: (submissionResult: SubmitResult) => void,
-	) => {
-		const { testcase_id, status, stdout, stderr } = data;
-		const prev = get(submitResultAtom);
-		const newResult = {
-			...prev,
-			execResults: prev.execResults.map((r) =>
-				r.testcase_id === testcase_id && r.status === "running"
-					? {
-							...r,
-							status,
-							stdout,
-							stderr,
-						}
-					: r,
-			),
-		};
-		set(submitResultAtom, newResult);
-		callback(newResult);
-	},
-);
-
-export const handleWsSubmitResultMessageAtom = atom(
-	null,
-	(
-		get,
-		set,
-		data: GamePlayerMessageS2CSubmitResultPayload,
-		callback: (submissionResult: SubmitResult, score: number | null) => void,
-	) => {
-		const { status, score } = data;
-		const prev = get(submitResultAtom);
-		const newResult = {
-			...prev,
-			status,
-		};
-		if (status !== "success") {
-			newResult.execResults = prev.execResults.map((r) =>
-				r.status === "running" ? { ...r, status: "canceled" } : r,
-			);
-		} else {
-			newResult.execResults = prev.execResults.map((r) => ({
-				...r,
-				status: "success",
-			}));
-		}
-		set(submitResultAtom, newResult);
-		if (status === "success" && score !== null) {
-			const currentScore = get(scoreAtom);
-			if (currentScore === null || score < currentScore) {
-				set(scoreAtom, score);
-			}
-		}
-		callback(newResult, score);
+	(_, set, value: LatestGameState) => {
+		set(rawStatusAtom, value.status);
+		set(rawScoreAtom, value.score);
 	},
 );

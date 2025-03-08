@@ -107,8 +107,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/auth"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/auth"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
 )
 
 var _ StrictServerInterface = (*HandlerWrapper)(nil)
@@ -117,11 +117,11 @@ type HandlerWrapper struct {
 	impl Handler
 }
 
-func NewHandler(queries *db.Queries, hubs GameHubsInterface) *HandlerWrapper {
+func NewHandler(queries *db.Queries, hub GameHubInterface) *HandlerWrapper {
 	return &HandlerWrapper{
 		impl: Handler{
 			q:    queries,
-			hubs: hubs,
+			hub:  hub,
 		},
 	}
 }

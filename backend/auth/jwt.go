@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
 )
 
 var (
@@ -45,32 +45,9 @@ func NewJWT(user *db.User) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func NewAnonymousJWT() (string, error) {
-	claims := jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
-}
-
-func NewShortLivedJWT(claims *JWTClaims) (string, error) {
-	newClaims := &JWTClaims{
-		UserID:      claims.UserID,
-		Username:    claims.Username,
-		DisplayName: claims.DisplayName,
-		IconPath:    claims.IconPath,
-		IsAdmin:     claims.IsAdmin,
-		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 5)),
-		},
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, newClaims)
-	return token.SignedString(jwtSecret)
-}
-
 func ParseJWT(token string) (*JWTClaims, error) {
 	claims := new(JWTClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
+	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (any, error) {
 		return jwtSecret, nil
 	})
 	if err != nil {

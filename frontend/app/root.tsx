@@ -13,7 +13,7 @@ import "./tailwind.css";
 config.autoAddCss = false;
 
 export const links: LinksFunction = () => [
-	{ rel: "icon", href: "/iosdc-japan/2024/code-battle/favicon.svg" },
+	{ rel: "icon", href: "/phperkaigi/2025/code-battle/favicon.svg" },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

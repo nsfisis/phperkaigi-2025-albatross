@@ -42,6 +42,11 @@ sqldef-dryrun: down
 	${DOCKER_COMPOSE} up --wait db
 	${DOCKER_COMPOSE} run --no-TTY tools psqldef --dry-run < ./backend/schema.sql
 
+.PHONY: asynq
+asynq:
+	${DOCKER_COMPOSE} up --wait db
+	${DOCKER_COMPOSE} run tools go run github.com/hibiken/asynq/tools/asynq dash
+
 .PHONY: sqldef
 sqldef: down
 	${DOCKER_COMPOSE} build db

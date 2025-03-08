@@ -1,6 +1,9 @@
-FROM golang:1.22.3
+FROM golang:1.23.6
 
 WORKDIR /tools
+
+COPY go.mod go.sum ./
+RUN go mod download
 
 RUN wget -O psqldef.tar.gz https://github.com/sqldef/sqldef/releases/download/v0.17.14/psqldef_linux_amd64.tar.gz
 

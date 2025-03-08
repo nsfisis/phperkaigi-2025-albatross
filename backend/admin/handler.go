@@ -12,30 +12,29 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/account"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/auth"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/account"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/auth"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
 )
 
 const (
-	basePath = "/iosdc-japan/2024/code-battle"
+	basePath = "/phperkaigi/2025/code-battle"
 )
 
 var jst = time.FixedZone("Asia/Tokyo", 9*60*60)
 
 type Handler struct {
-	q    *db.Queries
-	hubs GameHubsInterface
+	q   *db.Queries
+	hub GameHubInterface
 }
 
-type GameHubsInterface interface {
-	StartGame(gameID int) error
-}
+// TODO
+type GameHubInterface any
 
-func NewHandler(q *db.Queries, hubs GameHubsInterface) *Handler {
+func NewHandler(q *db.Queries, hub GameHubInterface) *Handler {
 	return &Handler{
-		q:    q,
-		hubs: hubs,
+		q:   q,
+		hub: hub,
 	}
 }
 
@@ -69,7 +68,7 @@ func (h *Handler) RegisterHandlers(g *echo.Group) {
 	g.GET("/games", h.getGames)
 	g.GET("/games/:gameID", h.getGameEdit)
 	g.POST("/games/:gameID", h.postGameEdit)
-	g.GET("/audio", h.getAudioTest)
+	g.POST("/games/:gameID/start", h.postGameStart)
 }
 
 func (h *Handler) getDashboard(c echo.Context) error {
@@ -151,20 +150,20 @@ func (h *Handler) postUserFetchIcon(c echo.Context) error {
 }
 
 func (h *Handler) getGames(c echo.Context) error {
-	rows, err := h.q.ListGames(c.Request().Context())
+	rows, err := h.q.ListAllGames(c.Request().Context())
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	games := make([]echo.Map, len(rows))
 	for i, g := range rows {
 		var startedAt string
-		if !g.StartedAt.Valid {
+		if g.StartedAt.Valid {
 			startedAt = g.StartedAt.Time.In(jst).Format("2006-01-02T15:04")
 		}
 		games[i] = echo.Map{
 			"GameID":          g.GameID,
 			"GameType":        g.GameType,
-			"State":           g.State,
+			"IsPublic":        g.IsPublic,
 			"DisplayName":     g.DisplayName,
 			"DurationSeconds": g.DurationSeconds,
 			"StartedAt":       startedAt,
@@ -193,7 +192,7 @@ func (h *Handler) getGameEdit(c echo.Context) error {
 	}
 
 	var startedAt string
-	if !row.StartedAt.Valid {
+	if row.StartedAt.Valid {
 		startedAt = row.StartedAt.Time.In(jst).Format("2006-01-02T15:04")
 	}
 
@@ -203,7 +202,7 @@ func (h *Handler) getGameEdit(c echo.Context) error {
 		"Game": echo.Map{
 			"GameID":          row.GameID,
 			"GameType":        row.GameType,
-			"State":           row.State,
+			"IsPublic":        row.IsPublic,
 			"DisplayName":     row.DisplayName,
 			"DurationSeconds": row.DurationSeconds,
 			"StartedAt":       startedAt,
@@ -217,16 +216,9 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game id")
 	}
-	row, err := h.q.GetGameByID(c.Request().Context(), int32(gameID))
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return echo.NewHTTPError(http.StatusNotFound)
-		}
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
 
 	gameType := c.FormValue("game_type")
-	state := c.FormValue("state")
+	isPublic := c.FormValue("is_public") == "public"
 	displayName := c.FormValue("display_name")
 	durationSeconds, err := strconv.Atoi(c.FormValue("duration_seconds"))
 	if err != nil {
@@ -268,7 +260,7 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 	err = h.q.UpdateGame(c.Request().Context(), db.UpdateGameParams{
 		GameID:          int32(gameID),
 		GameType:        gameType,
-		State:           state,
+		IsPublic:        isPublic,
 		DisplayName:     displayName,
 		DurationSeconds: int32(durationSeconds),
 		StartedAt:       changedStartedAt,
@@ -278,36 +270,27 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	{
-		// TODO:
-		if state != row.State && state == "starting" {
-			err := h.hubs.StartGame(int(gameID))
-			if err != nil {
-				return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-			}
-		}
-	}
-
 	return c.Redirect(http.StatusSeeOther, basePath+"/admin/games")
 }
 
-func (h *Handler) getAudioTest(c echo.Context) error {
-	return c.Render(http.StatusOK, "audio", echo.Map{
-		"BasePath": basePath,
-		"Title":    "Audio Test",
-		"Audio": []echo.Map{
-			{"FileName": "EX_33.wav", "Label": "終了"},
-			{"FileName": "EX_34.wav", "Label": "勝敗1"},
-			{"FileName": "EX_35.wav", "Label": "勝敗2"},
-			{"FileName": "EX_36.wav", "Label": "グッド1"},
-			{"FileName": "EX_37.wav", "Label": "グッド2"},
-			{"FileName": "EX_38.wav", "Label": "グッド3"},
-			{"FileName": "EX_39.wav", "Label": "グッド4"},
-			{"FileName": "EX_40.wav", "Label": "スコア更新1"},
-			{"FileName": "EX_41.wav", "Label": "スコア更新2"},
-			{"FileName": "EX_42.wav", "Label": "スコア更新3"},
-			{"FileName": "EX_43.wav", "Label": "コンパイルエラー1"},
-			{"FileName": "EX_44.wav", "Label": "コンパイルエラー2"},
+func (h *Handler) postGameStart(c echo.Context) error {
+	gameID, err := strconv.Atoi(c.Param("gameID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game id")
+	}
+
+	startedAt := time.Now().Add(11 * time.Second)
+
+	err = h.q.UpdateGameStartedAt(c.Request().Context(), db.UpdateGameStartedAtParams{
+		GameID: int32(gameID),
+		StartedAt: pgtype.Timestamp{
+			Time:  startedAt,
+			Valid: true,
 		},
 	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.Redirect(http.StatusSeeOther, basePath+"/admin/games")
 }

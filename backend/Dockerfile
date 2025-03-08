@@ -1,4 +1,4 @@
-FROM golang:1.22.3 AS builder
+FROM golang:1.23.6 AS builder
 
 WORKDIR /build
 COPY go.mod go.sum ./
@@ -8,7 +8,7 @@ COPY . /build
 RUN go build -o /build/server .
 
 ################################################################################
-FROM golang:1.22.3
+FROM golang:1.23.6
 
 WORKDIR /app
 COPY --from=builder /build/server /app/server

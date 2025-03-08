@@ -11,11 +11,11 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	oapimiddleware "github.com/oapi-codegen/echo-middleware"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/admin"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/api"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/game"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/taskqueue"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/admin"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/api"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/game"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/taskqueue"
 )
 
 func connectDB(ctx context.Context, dsn string) (*pgxpool.Pool, error) {
@@ -38,7 +38,7 @@ func main() {
 		log.Fatalf("Error loading env %v", err)
 	}
 
-	openAPISpec, err := api.GetSwaggerWithPrefix("/iosdc-japan/2024/code-battle/api")
+	openAPISpec, err := api.GetSwaggerWithPrefix("/phperkaigi/2025/code-battle/api")
 	if err != nil {
 		log.Fatalf("Error loading OpenAPI spec\n: %s", err)
 	}
@@ -61,36 +61,23 @@ func main() {
 	e.Use(middleware.Recover())
 
 	taskQueue := taskqueue.NewQueue("task-db:6379")
-	workerServer := taskqueue.NewWorkerServer("task-db:6379", queries)
+	workerServer := taskqueue.NewWorkerServer("task-db:6379")
 
-	gameHubs := game.NewGameHubs(queries, taskQueue, workerServer.Results())
-	err = gameHubs.RestoreFromDB(ctx)
-	if err != nil {
-		log.Fatalf("Error restoring game hubs from db %v", err)
-	}
-	defer gameHubs.Close()
-	sockGroup := e.Group("/iosdc-japan/2024/code-battle/sock")
-	sockHandler := gameHubs.SockHandler()
-	sockGroup.GET("/golf/:gameID/play", func(c echo.Context) error {
-		return sockHandler.HandleSockGolfPlay(c)
-	})
-	sockGroup.GET("/golf/:gameID/watch", func(c echo.Context) error {
-		return sockHandler.HandleSockGolfWatch(c)
-	})
+	gameHub := game.NewGameHub(queries, taskQueue, workerServer)
 
-	apiGroup := e.Group("/iosdc-japan/2024/code-battle/api")
+	apiGroup := e.Group("/phperkaigi/2025/code-battle/api")
 	apiGroup.Use(oapimiddleware.OapiRequestValidator(openAPISpec))
-	apiHandler := api.NewHandler(queries, gameHubs)
+	apiHandler := api.NewHandler(queries, gameHub)
 	api.RegisterHandlers(apiGroup, api.NewStrictHandler(apiHandler, nil))
 
-	adminHandler := admin.NewHandler(queries, gameHubs)
-	adminGroup := e.Group("/iosdc-japan/2024/code-battle/admin")
+	adminHandler := admin.NewHandler(queries, gameHub)
+	adminGroup := e.Group("/phperkaigi/2025/code-battle/admin")
 	adminHandler.RegisterHandlers(adminGroup)
 
 	if config.isLocal {
 		// For local dev: This is never used in production because the reverse
 		// proxy directly handles /files.
-		filesGroup := e.Group("/iosdc-japan/2024/code-battle/files")
+		filesGroup := e.Group("/phperkaigi/2025/code-battle/files")
 		filesGroup.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 			Root:       "/",
 			Filesystem: http.Dir("/data/files"),
@@ -99,21 +86,18 @@ func main() {
 
 		// For local dev: This is never used in production because the reverse
 		// proxy sends these paths to the app server.
-		e.GET("/iosdc-japan/2024/code-battle/*", func(c echo.Context) error {
+		e.GET("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
-		e.POST("/iosdc-japan/2024/code-battle/*", func(c echo.Context) error {
+		e.POST("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
+
+		// Allow access from dev server.
+		e.Use(middleware.CORS())
 	}
 
-	go gameHubs.Run()
-
-	go func() {
-		if err := workerServer.Run(); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	go gameHub.Run()
 
 	if err := e.Start(":80"); err != http.ErrServerClosed {
 		log.Fatal(err)

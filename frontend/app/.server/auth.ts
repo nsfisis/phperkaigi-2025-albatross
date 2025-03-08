@@ -3,8 +3,8 @@ import type { Session } from "@remix-run/server-runtime";
 import { jwtDecode } from "jwt-decode";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { apiPostLogin } from "./api/client";
-import { components } from "./api/schema";
+import { apiPostLogin } from "../api/client";
+import { components } from "../api/schema";
 import { createUnstructuredCookie } from "./cookie";
 import { cookieOptions, sessionStorage } from "./session";
 
@@ -14,14 +14,7 @@ authenticator.use(
 	new FormStrategy(async ({ form }) => {
 		const username = String(form.get("username"));
 		const password = String(form.get("password"));
-		const registrationToken = String(form.get("registration_token"));
-		return (
-			await apiPostLogin(
-				username,
-				password,
-				registrationToken === "" ? null : registrationToken,
-			)
-		).token;
+		return (await apiPostLogin(username, password)).token;
 	}),
 	"default",
 );

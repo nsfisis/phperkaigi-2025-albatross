@@ -20,33 +20,9 @@ paths:
                 password:
                   type: string
                   example: "password123"
-                registration_token:
-                  type: string
-                  example: "xxxxxxxxxxxxxxxx"
               required:
                 - username
                 - password
-      responses:
-        '200':
-          description: Successfully authenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    example: "xxxxx.xxxxx.xxxxx"
-                required:
-                  - token
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /token:
-    get:
-      operationId: getToken
-      summary: Get a short-lived access token
-      parameters:
-        - $ref: '#/components/parameters/header_authorization'
       responses:
         '200':
           description: Successfully authenticated
@@ -105,6 +81,141 @@ paths:
                     $ref: '#/components/schemas/Game'
                 required:
                   - game
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /games/{game_id}/play/latest_state:
+    get:
+      operationId: getGamePlayLatestState
+      summary: Get the latest execution result for player
+      parameters:
+        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/path_game_id'
+      responses:
+        '200':
+          description: Your latest game state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    $ref: '#/components/schemas/LatestGameState'
+                required:
+                  - state
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /games/{game_id}/play/code:
+    post:
+      operationId: postGamePlayCode
+      summary: Post the latest code
+      parameters:
+        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/path_game_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: "echo 'hello world';"
+              required:
+                - code
+      responses:
+        '200':
+          description: Successfully updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /games/{game_id}/play/submit:
+    post:
+      operationId: postGamePlaySubmit
+      summary: Submit the answer
+      parameters:
+        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/path_game_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  example: "echo 'hello world';"
+              required:
+                - code
+      responses:
+        '200':
+          description: Successfully submitted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /games/{game_id}/watch/ranking:
+    get:
+      operationId: getGameWatchRanking
+      summary: Get the latest player ranking
+      parameters:
+        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/path_game_id'
+      responses:
+        '200':
+          description: Player ranking
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ranking:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RankingEntry'
+                required:
+                  - ranking
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /games/{game_id}/watch/latest_states:
+    get:
+      operationId: getGameWatchLatestStates
+      summary: Get all the latest game states of the main players
+      parameters:
+        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/path_game_id'
+      responses:
+        '200':
+          description: All the latest game states of the main players
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  states:
+                    type: object
+                    additionalProperties:
+                      $ref: '#/components/schemas/LatestGameState'
+                required:
+                  - states
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -194,15 +305,9 @@ components:
           enum:
             - 1v1
             - multiplayer
-        state:
-          type: string
-          example: "closed"
-          enum:
-            - closed
-            - waiting
-            - starting
-            - gaming
-            - finished
+        is_public:
+          type: boolean
+          example: true
         display_name:
           type: string
           example: "Game 1"
@@ -215,36 +320,18 @@ components:
           x-go-type: int64
         problem:
           $ref: '#/components/schemas/Problem'
-        players:
+        main_players:
           type: array
           items:
             $ref: '#/components/schemas/User'
-        exec_steps:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExecStep'
       required:
         - game_id
         - game_type
-        - state
+        - is_public
         - display_name
         - duration_seconds
         - problem
-        - players
-        - exec_steps
-    ExecStep:
-      type: object
-      properties:
-        testcase_id:
-          type: integer
-          nullable: true
-          example: 1
-        label:
-          type: string
-          example: "Test case 1"
-      required:
-        - testcase_id
-        - label
+        - main_players
     Problem:
       type: object
       properties:
@@ -257,301 +344,49 @@ components:
         description:
           type: string
           example: "This is a problem"
+        sample_code:
+          type: string
+          example: "echo 'hello world';"
       required:
         - problem_id
         - title
         - description
-    GamePlayerMessage:
-      oneOf:
-        - $ref: '#/components/schemas/GamePlayerMessageS2C'
-        - $ref: '#/components/schemas/GamePlayerMessageC2S'
-    GamePlayerMessageS2C:
-      oneOf:
-        - $ref: '#/components/schemas/GamePlayerMessageS2CStart'
-        - $ref: '#/components/schemas/GamePlayerMessageS2CExecResult'
-        - $ref: '#/components/schemas/GamePlayerMessageS2CSubmitResult'
-    GamePlayerMessageS2CStart:
+        - sample_code
+    ExecutionStatus:
+      type: string
+      example: "success"
+      enum:
+        - none
+        - running
+        - success
+        - wrong_answer
+        - timeout
+        - runtime_error
+        - internal_error
+    LatestGameState:
       type: object
       properties:
-        type:
+        code:
           type: string
-          const: "player:s2c:start"
-        data:
-          $ref: '#/components/schemas/GamePlayerMessageS2CStartPayload'
-      required:
-        - type
-        - data
-    GamePlayerMessageS2CStartPayload:
-      type: object
-      properties:
-        start_at:
-          type: integer
-          example: 946684800
-          x-go-type: int64
-      required:
-        - start_at
-    GamePlayerMessageS2CExecResult:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "player:s2c:execresult"
-        data:
-          $ref: '#/components/schemas/GamePlayerMessageS2CExecResultPayload'
-      required:
-        - type
-        - data
-    GamePlayerMessageS2CExecResultPayload:
-      type: object
-      properties:
-        testcase_id:
-          type: integer
-          nullable: true
-          example: 1
-        status:
-          type: string
-          example: "success"
-          enum:
-            - success
-            - wrong_answer
-            - timeout
-            - runtime_error
-            - internal_error
-            - compile_error
-        stdout:
-          type: string
-          example: "Hello, world!"
-        stderr:
-          type: string
-          example: ""
-      required:
-        - testcase_id
-        - status
-        - stdout
-        - stderr
-    GamePlayerMessageS2CSubmitResult:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "player:s2c:submitresult"
-        data:
-          $ref: '#/components/schemas/GamePlayerMessageS2CSubmitResultPayload'
-      required:
-        - type
-        - data
-    GamePlayerMessageS2CSubmitResultPayload:
-      type: object
-      properties:
-        status:
-          type: string
-          example: "success"
-          enum:
-            - success
-            - wrong_answer
-            - timeout
-            - runtime_error
-            - internal_error
-            - compile_error
+          example: "echo 'hello world';"
         score:
           type: integer
           nullable: true
           example: 100
+        status:
+          $ref: '#/components/schemas/ExecutionStatus'
       required:
-        - status
+        - code
         - score
-    GamePlayerMessageC2S:
-      oneOf:
-        - $ref: '#/components/schemas/GamePlayerMessageC2SCode'
-        - $ref: '#/components/schemas/GamePlayerMessageC2SSubmit'
-    GamePlayerMessageC2SCode:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "player:c2s:code"
-        data:
-          $ref: '#/components/schemas/GamePlayerMessageC2SCodePayload'
-      required:
-        - type
-        - data
-    GamePlayerMessageC2SCodePayload:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "print('Hello, world!')"
-      required:
-        - code
-    GamePlayerMessageC2SSubmit:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "player:c2s:submit"
-        data:
-          $ref: '#/components/schemas/GamePlayerMessageC2SSubmitPayload'
-      required:
-        - type
-        - data
-    GamePlayerMessageC2SSubmitPayload:
-      type: object
-      properties:
-        code:
-          type: string
-          example: "print('Hello, world!')"
-      required:
-        - code
-    GameWatcherMessage:
-      oneOf:
-        - $ref: '#/components/schemas/GameWatcherMessageS2C'
-        # - $ref: '#/components/schemas/GameWatcherMessageC2S'
-    GameWatcherMessageS2C:
-      oneOf:
-        - $ref: '#/components/schemas/GameWatcherMessageS2CStart'
-        - $ref: '#/components/schemas/GameWatcherMessageS2CCode'
-        - $ref: '#/components/schemas/GameWatcherMessageS2CSubmit'
-        - $ref: '#/components/schemas/GameWatcherMessageS2CExecResult'
-        - $ref: '#/components/schemas/GameWatcherMessageS2CSubmitResult'
-    GameWatcherMessageS2CStart:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "watcher:s2c:start"
-        data:
-          $ref: '#/components/schemas/GameWatcherMessageS2CStartPayload'
-      required:
-        - type
-        - data
-    GameWatcherMessageS2CStartPayload:
-      type: object
-      properties:
-        start_at:
-          type: integer
-          example: 946684800
-          x-go-type: int64
-      required:
-        - start_at
-    GameWatcherMessageS2CCode:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "watcher:s2c:code"
-        data:
-          $ref: '#/components/schemas/GameWatcherMessageS2CCodePayload'
-      required:
-        - type
-        - data
-    GameWatcherMessageS2CCodePayload:
-      type: object
-      properties:
-        player_id:
-          type: integer
-          example: 1
-        code:
-          type: string
-          example: "print('Hello, world!')"
-      required:
-        - player_id
-        - code
-    GameWatcherMessageS2CSubmit:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "watcher:s2c:submit"
-        data:
-          $ref: '#/components/schemas/GameWatcherMessageS2CSubmitPayload'
-      required:
-        - type
-        - data
-    GameWatcherMessageS2CSubmitPayload:
-      type: object
-      properties:
-        player_id:
-          type: integer
-          example: 1
-      required:
-        - player_id
-    GameWatcherMessageS2CExecResult:
-      type: object
-      properties:
-        type:
-          type: string
-          const: "watcher:s2c:execresult"
-        data:
-          $ref: '#/components/schemas/GameWatcherMessageS2CExecResultPayload'
-      required:
-        - type
-        - data
-    GameWatcherMessageS2CExecResultPayload:
-      type: object
-      properties:
-        player_id:
-          type: integer
-          example: 1
-        testcase_id:
-          type: integer
-          nullable: true
-          example: 1
-        status:
-          type: string
-          example: "success"
-          enum:
-            - success
-            - wrong_answer
-            - timeout
-            - runtime_error
-            - internal_error
-            - compile_error
-        stdout:
-          type: string
-          example: "Hello, world!"
-        stderr:
-          type: string
-          example: ""
-      required:
-        - player_id
-        - testcase_id
         - status
-        - stdout
-        - stderr
-    GameWatcherMessageS2CSubmitResult:
+    RankingEntry:
       type: object
       properties:
-        type:
-          type: string
-          const: "watcher:s2c:submitresult"
-        data:
-          $ref: '#/components/schemas/GameWatcherMessageS2CSubmitResultPayload'
-      required:
-        - type
-        - data
-    GameWatcherMessageS2CSubmitResultPayload:
-      type: object
-      properties:
-        player_id:
-          type: integer
-          example: 1
-        status:
-          type: string
-          example: "success"
-          enum:
-            - success
-            - wrong_answer
-            - timeout
-            - runtime_error
-            - internal_error
-            - compile_error
+        player:
+          $ref: '#/components/schemas/User'
         score:
           type: integer
-          nullable: true
           example: 100
       required:
-        - player_id
-        - status
+        - player
         - score
-    # GameWatcherMessageC2S:
-    #   oneOf:

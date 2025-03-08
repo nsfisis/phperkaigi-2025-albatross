@@ -1,6 +1,6 @@
 ARG ALBATROSS_HOST
 
-FROM node:20.14.0 AS builder
+FROM node:22.14 AS builder
 
 WORKDIR /app
 ENV NODE_ENV=production
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 ################################################################################
-FROM node:20.14.0
+FROM node:22.14
 
 WORKDIR /app
 ENV NODE_ENV=production

@@ -1,128 +1,64 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { useHydrateAtoms } from "jotai/utils";
-import { apiGetGame, apiGetToken } from "../.server/api/client";
 import { ensureUserLoggedIn } from "../.server/auth";
-import GolfPlayApp from "../components/GolfPlayApp.client";
-import GolfPlayAppConnecting from "../components/GolfPlayApps/GolfPlayAppConnecting";
 import {
-	scoreAtom,
+	ApiAuthTokenContext,
+	apiGetGame,
+	apiGetGamePlayLatestState,
+} from "../api/client";
+import GolfPlayApp from "../components/GolfPlayApp";
+import {
 	setCurrentTimestampAtom,
 	setDurationSecondsAtom,
-	submitResultAtom,
+	setGameStartedAtAtom,
+	setLatestGameStateAtom,
 } from "../states/play";
-import { PlayerState } from "../types/PlayerState";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
 	{
 		title: data
-			? `Golf Playing ${data.game.display_name} | iOSDC Japan 2024 Albatross.swift`
-			: "Golf Playing | iOSDC Japan 2024 Albatross.swift",
+			? `Golf Playing ${data.game.display_name} | PHPerKaigi 2025 Albatross`
+			: "Golf Playing | PHPerKaigi 2025 Albatross",
 	},
 ];
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { token, user } = await ensureUserLoggedIn(request);
 
+	const gameId = Number(params.gameId);
+
 	const fetchGame = async () => {
-		return (await apiGetGame(token, Number(params.gameId))).game;
+		return (await apiGetGame(token, gameId)).game;
 	};
-	const fetchSockToken = async () => {
-		return (await apiGetToken(token)).token;
+	const fetchGameState = async () => {
+		return (await apiGetGamePlayLatestState(token, gameId)).state;
 	};
 
-	const [game, sockToken] = await Promise.all([fetchGame(), fetchSockToken()]);
-
-	const playerState: PlayerState = {
-		code: "",
-		score: null,
-		submitResult: {
-			status: "waiting_submission",
-			execResults: game.exec_steps.map((r) => ({
-				testcase_id: r.testcase_id,
-				status: "waiting_submission",
-				label: r.label,
-				stdout: "",
-				stderr: "",
-			})),
-		},
-	};
+	const [game, state] = await Promise.all([fetchGame(), fetchGameState()]);
 
 	return {
+		apiAuthToken: token,
 		game,
 		player: user,
-		sockToken,
-		playerState,
+		gameState: state,
 	};
-}
-
-export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
-	const data = await serverLoader<typeof loader>();
-	const baseKey = `playerState:${data.game.game_id}:${data.player.user_id}`;
-
-	const localCode = (() => {
-		const rawValue = window.localStorage.getItem(`${baseKey}:code`);
-		if (rawValue === null) {
-			return null;
-		}
-		return rawValue;
-	})();
-
-	const localScore = (() => {
-		const rawValue = window.localStorage.getItem(`${baseKey}:score`);
-		if (rawValue === null || rawValue === "") {
-			return null;
-		}
-		return Number(rawValue);
-	})();
-
-	const localSubmissionResult = (() => {
-		const rawValue = window.localStorage.getItem(`${baseKey}:submissionResult`);
-		if (rawValue === null) {
-			return null;
-		}
-		const parsed = JSON.parse(rawValue);
-		if (typeof parsed !== "object") {
-			return null;
-		}
-		return parsed;
-	})();
-
-	if (localCode !== null) {
-		data.playerState.code = localCode;
-	}
-	if (localScore !== null) {
-		data.playerState.score = localScore;
-	}
-	if (localSubmissionResult !== null) {
-		data.playerState.submitResult = localSubmissionResult;
-	}
-
-	return data;
-}
-clientLoader.hydrate = true;
-
-export function HydrateFallback() {
-	return <GolfPlayAppConnecting />;
 }
 
 export default function GolfPlay() {
-	const { game, player, sockToken, playerState } =
+	const { apiAuthToken, game, player, gameState } =
 		useLoaderData<typeof loader>();
 
 	useHydrateAtoms([
 		[setCurrentTimestampAtom, undefined],
 		[setDurationSecondsAtom, game.duration_seconds],
-		[scoreAtom, playerState.score],
-		[submitResultAtom, playerState.submitResult],
+		[setGameStartedAtAtom, game.started_at ?? null],
+		[setLatestGameStateAtom, gameState],
 	]);
 
 	return (
-		<GolfPlayApp
-			game={game}
-			player={player}
-			initialCode={playerState.code}
-			sockToken={sockToken}
-		/>
+		<ApiAuthTokenContext.Provider value={apiAuthToken}>
+			<GolfPlayApp game={game} player={player} initialCode={gameState.code} />
+		</ApiAuthTokenContext.Provider>
 	);
 }

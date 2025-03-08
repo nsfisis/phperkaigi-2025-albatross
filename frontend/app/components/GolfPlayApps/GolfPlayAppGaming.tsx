@@ -5,10 +5,11 @@ import SubmitButton from "../../components/SubmitButton";
 import {
 	gamingLeftTimeSecondsAtom,
 	scoreAtom,
-	submitResultAtom,
+	statusAtom,
 } from "../../states/play";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";
+import CodeBlock from "../Gaming/CodeBlock";
 import SubmitResult from "../Gaming/SubmitResult";
 import UserIcon from "../UserIcon";
 
@@ -17,6 +18,7 @@ type Props = {
 	playerProfile: PlayerProfile;
 	problemTitle: string;
 	problemDescription: string;
+	sampleCode: string;
 	initialCode: string;
 	onCodeChange: (code: string) => void;
 	onCodeSubmit: (code: string) => void;
@@ -27,13 +29,14 @@ export default function GolfPlayAppGaming({
 	playerProfile,
 	problemTitle,
 	problemDescription,
+	sampleCode,
 	initialCode,
 	onCodeChange,
 	onCodeSubmit,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const score = useAtomValue(scoreAtom);
-	const submitResult = useAtomValue(submitResultAtom);
+	const status = useAtomValue(statusAtom);
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -55,7 +58,7 @@ export default function GolfPlayAppGaming({
 
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
-			<div className="text-white bg-iosdc-japan flex flex-row justify-between px-4 py-2">
+			<div className="text-white bg-sky-600 flex flex-row justify-between px-4 py-2">
 				<div className="font-bold">
 					<div className="text-gray-100">{gameDisplayName}</div>
 					<div className="text-2xl">{leftTime}</div>
@@ -80,9 +83,15 @@ export default function GolfPlayAppGaming({
 			<div className="grow grid grid-cols-3 divide-x divide-gray-300">
 				<div className="p-4">
 					<div className="mb-2 text-xl font-bold">{problemTitle}</div>
-					<div className="p-2">
+					<div className="p-2 grid gap-4">
 						<BorderedContainer>
 							<div className="text-gray-700">{problemDescription}</div>
+						</BorderedContainer>
+						<BorderedContainer>
+							<div>
+								<h2>サンプルコード</h2>
+								<CodeBlock code={sampleCode} language="php" />
+							</div>
 						</BorderedContainer>
 					</div>
 				</div>
@@ -96,7 +105,7 @@ export default function GolfPlayAppGaming({
 				</div>
 				<div className="p-4">
 					<SubmitResult
-						result={submitResult}
+						status={status}
 						submitButton={
 							<SubmitButton onClick={handleSubmitButtonClick}>
 								提出

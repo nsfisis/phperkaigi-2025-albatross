@@ -1,13 +1,13 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { apiGetGames } from "../.server/api/client";
 import { ensureUserLoggedIn } from "../.server/auth";
+import { apiGetGames } from "../api/client";
 import BorderedContainer from "../components/BorderedContainer";
 import NavigateLink from "../components/NavigateLink";
 import UserIcon from "../components/UserIcon";
 
 export const meta: MetaFunction = () => [
-	{ title: "Dashboard | iOSDC Japan 2024 Albatross.swift" },
+	{ title: "Dashboard | PHPerKaigi 2025 Albatross" },
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -39,7 +39,7 @@ export default function Dashboard() {
 			<BorderedContainer>
 				<div className="px-4">
 					{games.length === 0 ? (
-						<p>エントリーしている試合はありません</p>
+						<p>エントリーできる試合はありません</p>
 					) : (
 						<ul className="divide-y">
 							{games.map((game) => (
@@ -58,15 +58,12 @@ export default function Dashboard() {
 										</span>
 									</div>
 									<span>
-										{game.state === "closed" || game.state === "finished" ? (
-											<span className="text-lg text-gray-400 bg-gray-200 px-4 py-2 rounded">
-												入室
-											</span>
-										) : (
-											<NavigateLink to={`/golf/${game.game_id}/play`}>
-												入室
-											</NavigateLink>
-										)}
+										<NavigateLink to={`/golf/${game.game_id}/play`}>
+											対戦
+										</NavigateLink>
+										<NavigateLink to={`/golf/${game.game_id}/watch`}>
+											観戦
+										</NavigateLink>
 									</span>
 								</li>
 							))}
@@ -86,10 +83,10 @@ export default function Dashboard() {
 				<a
 					href={
 						process.env.NODE_ENV === "development"
-							? "http://localhost:8002/iosdc-japan/2024/code-battle/admin/dashboard"
-							: "/iosdc-japan/2024/code-battle/admin/dashboard"
+							? "http://localhost:8003/phperkaigi/2025/code-battle/admin/dashboard"
+							: "/phperkaigi/2025/code-battle/admin/dashboard"
 					}
-					className="text-lg text-white bg-pink-600 px-4 py-2 rounded transition duration-300 hover:bg-pink-500 focus:ring focus:ring-pink-400 focus:outline-none"
+					className="text-lg text-white bg-sky-600 px-4 py-2 rounded transition duration-300 hover:bg-sky-500 focus:ring focus:ring-sky-400 focus:outline-none"
 				>
 					Admin Dashboard
 				</a>

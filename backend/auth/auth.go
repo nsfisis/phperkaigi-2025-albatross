@@ -9,15 +9,13 @@ import (
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/account"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/db"
-	"github.com/nsfisis/iosdc-japan-2024-albatross/backend/fortee"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/account"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/db"
+	"github.com/nsfisis/phperkaigi-2025-albatross/backend/fortee"
 )
 
 var (
-	ErrInvalidRegistrationToken = errors.New("invalid registration token")
-	ErrNoRegistrationToken      = errors.New("no registration token")
-	ErrForteeLoginTimeout       = errors.New("fortee login timeout")
+	ErrForteeLoginTimeout = errors.New("fortee login timeout")
 )
 
 const (
@@ -29,7 +27,6 @@ func Login(
 	queries *db.Queries,
 	username string,
 	password string,
-	registrationToken *string,
 ) (int, error) {
 	userAuth, err := queries.GetUserAuthByUsername(ctx, username)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
@@ -50,7 +47,7 @@ func Login(
 	}
 
 	// Authenticate with fortee.
-	return verifyForteeAccountOrSignup(ctx, queries, username, password, registrationToken)
+	return verifyForteeAccountOrSignup(ctx, queries, username, password)
 }
 
 func verifyForteeAccountOrSignup(
@@ -58,7 +55,6 @@ func verifyForteeAccountOrSignup(
 	queries *db.Queries,
 	username string,
 	password string,
-	registrationToken *string,
 ) (int, error) {
 	canonicalizedUsername, err := verifyForteeAccount(ctx, username, password)
 	if err != nil {
@@ -71,7 +67,6 @@ func verifyForteeAccountOrSignup(
 				ctx,
 				queries,
 				canonicalizedUsername,
-				registrationToken,
 			)
 		}
 		return 0, err
@@ -83,12 +78,7 @@ func signup(
 	ctx context.Context,
 	queries *db.Queries,
 	username string,
-	registrationToken *string,
 ) (int, error) {
-	if err := verifyRegistrationToken(ctx, queries, registrationToken); err != nil {
-		return 0, err
-	}
-
 	// TODO: transaction
 	userID, err := queries.CreateUser(ctx, username)
 	if err != nil {
@@ -108,20 +98,6 @@ func signup(
 		}
 	}()
 	return int(userID), nil
-}
-
-func verifyRegistrationToken(ctx context.Context, queries *db.Queries, registrationToken *string) error {
-	if registrationToken == nil {
-		return ErrNoRegistrationToken
-	}
-	exists, err := queries.IsRegistrationTokenValid(ctx, *registrationToken)
-	if err != nil {
-		return err
-	}
-	if !exists {
-		return ErrInvalidRegistrationToken
-	}
-	return nil
 }
 
 func verifyForteeAccount(ctx context.Context, username string, password string) (string, error) {

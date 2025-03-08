@@ -1,0 +1,17 @@
+{
+	"name": "phperkaigi-2025-albatross-worker",
+	"private": true,
+	"type": "module",
+	"main": "index.mjs",
+	"scripts": {
+		"check": "npm run check:biome",
+		"check:biome": "biome check --write"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4"
+	},
+	"dependencies": {
+		"@hono/node-server": "^1.13.8",
+		"hono": "^4.7.4"
+	}
+}
