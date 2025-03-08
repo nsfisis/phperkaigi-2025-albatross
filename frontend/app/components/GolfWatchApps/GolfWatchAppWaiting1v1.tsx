@@ -7,7 +7,7 @@ type Props = {
 	playerProfileB: PlayerProfile;
 };
 
-export default function GolfWatchAppWaiting({
+export default function GolfWatchAppWaiting1v1({
 	gameDisplayName,
 	playerProfileA,
 	playerProfileB,

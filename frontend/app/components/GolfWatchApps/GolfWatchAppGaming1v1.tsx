@@ -19,7 +19,7 @@ type Props = {
 	gameResult: "winA" | "winB" | "draw" | null;
 };
 
-export default function GolfWatchAppGaming({
+export default function GolfWatchAppGaming1v1({
 	gameDisplayName,
 	playerProfileA,
 	playerProfileB,
@@ -30,14 +30,14 @@ export default function GolfWatchAppGaming({
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const latestGameStates = useAtomValue(latestGameStatesAtom);
 
-	const stateA = latestGameStates[playerProfileA.id]!;
-	const codeA = stateA.code;
-	const scoreA = stateA.score;
-	const statusA = stateA.status;
-	const stateB = latestGameStates[playerProfileB.id]!;
-	const codeB = stateB.code;
-	const scoreB = stateB.score;
-	const statusB = stateB.status;
+	const stateA = latestGameStates[playerProfileA.id];
+	const codeA = stateA?.code ?? "";
+	const scoreA = stateA?.score ?? null;
+	const statusA = stateA?.status ?? "none";
+	const stateB = latestGameStates[playerProfileB.id];
+	const codeB = stateB?.code ?? "";
+	const scoreB = stateB?.score ?? null;
+	const statusB = stateB?.status ?? "none";
 
 	const leftTime = (() => {
 		const m = Math.floor(leftTimeSeconds / 60);

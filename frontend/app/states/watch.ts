@@ -58,10 +58,7 @@ export const gamingLeftTimeSecondsAtom = atom<number | null>((get) => {
 	return Math.min(durationSeconds, Math.max(0, finishedAt - currentTimestamp));
 });
 
-const rankingAtom = atom<RankingEntry[]>([]);
-export const setRankingAtom = atom(null, (_, set, value: RankingEntry[]) => {
-	set(rankingAtom, value);
-});
+export const rankingAtom = atom<RankingEntry[]>([]);
 
 const rawLatestGameStatesAtom = atom<{
 	[key: string]: LatestGameState | undefined;

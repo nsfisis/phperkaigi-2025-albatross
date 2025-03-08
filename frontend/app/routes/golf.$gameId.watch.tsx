@@ -10,11 +10,11 @@ import {
 } from "../api/client";
 import GolfWatchApp from "../components/GolfWatchApp";
 import {
+	rankingAtom,
 	setCurrentTimestampAtom,
 	setDurationSecondsAtom,
 	setGameStartedAtAtom,
 	setLatestGameStatesAtom,
-	setRankingAtom,
 } from "../states/watch";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
@@ -59,10 +59,10 @@ export default function GolfWatch() {
 		useLoaderData<typeof loader>();
 
 	useHydrateAtoms([
+		[rankingAtom, ranking],
 		[setCurrentTimestampAtom, undefined],
 		[setDurationSecondsAtom, game.duration_seconds],
 		[setGameStartedAtAtom, game.started_at ?? null],
-		[setRankingAtom, ranking],
 		[setLatestGameStatesAtom, gameStates],
 	]);
 

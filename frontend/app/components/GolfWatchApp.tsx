@@ -1,4 +1,4 @@
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useContext, useEffect, useState } from "react";
 import { useTimer } from "react-use-precision-timer";
 import {
@@ -10,14 +10,16 @@ import {
 import type { components } from "../api/schema";
 import {
 	gameStateKindAtom,
+	rankingAtom,
 	setCurrentTimestampAtom,
 	setGameStartedAtAtom,
 	setLatestGameStatesAtom,
-	setRankingAtom,
 } from "../states/watch";
-import GolfWatchAppGaming from "./GolfWatchApps/GolfWatchAppGaming";
+import GolfWatchAppGaming1v1 from "./GolfWatchApps/GolfWatchAppGaming1v1";
+import GolfWatchAppGamingMultiplayer from "./GolfWatchApps/GolfWatchAppGamingMultiplayer";
 import GolfWatchAppStarting from "./GolfWatchApps/GolfWatchAppStarting";
-import GolfWatchAppWaiting from "./GolfWatchApps/GolfWatchAppWaiting";
+import GolfWatchAppWaiting1v1 from "./GolfWatchApps/GolfWatchAppWaiting1v1";
+import GolfWatchAppWaitingMultiplayer from "./GolfWatchApps/GolfWatchAppWaitingMultiplayer";
 
 type Game = components["schemas"]["Game"];
 
@@ -32,23 +34,27 @@ export default function GolfWatchApp({ game }: Props) {
 	const setGameStartedAt = useSetAtom(setGameStartedAtAtom);
 	const setCurrentTimestamp = useSetAtom(setCurrentTimestampAtom);
 	const setLatestGameStates = useSetAtom(setLatestGameStatesAtom);
-	const setRanking = useSetAtom(setRankingAtom);
+	const [ranking, setRanking] = useAtom(rankingAtom);
 
 	useTimer({ delay: 1000, startImmediately: true }, setCurrentTimestamp);
 
-	const playerA = game.main_players[0]!;
-	const playerB = game.main_players[1]!;
+	const playerA = game.main_players[0];
+	const playerB = game.main_players[1];
 
-	const playerProfileA = {
-		id: playerA.user_id,
-		displayName: playerA.display_name,
-		iconPath: playerA.icon_path ?? null,
-	};
-	const playerProfileB = {
-		id: playerB.user_id,
-		displayName: playerB.display_name,
-		iconPath: playerB.icon_path ?? null,
-	};
+	const playerProfileA = playerA
+		? {
+				id: playerA.user_id,
+				displayName: playerA.display_name,
+				iconPath: playerA.icon_path ?? null,
+			}
+		: null;
+	const playerProfileB = playerB
+		? {
+				id: playerB.user_id,
+				displayName: playerB.display_name,
+				iconPath: playerB.icon_path ?? null,
+			}
+		: null;
 
 	const [isDataPolling, setIsDataPolling] = useState(false);
 
@@ -101,21 +107,31 @@ export default function GolfWatchApp({ game }: Props) {
 	]);
 
 	if (gameStateKind === "waiting") {
-		return (
-			<GolfWatchAppWaiting
+		return game.game_type === "1v1" ? (
+			<GolfWatchAppWaiting1v1
 				gameDisplayName={game.display_name}
-				playerProfileA={playerProfileA}
-				playerProfileB={playerProfileB}
+				playerProfileA={playerProfileA!}
+				playerProfileB={playerProfileB!}
 			/>
+		) : (
+			<GolfWatchAppWaitingMultiplayer gameDisplayName={game.display_name} />
 		);
 	} else if (gameStateKind === "starting") {
 		return <GolfWatchAppStarting gameDisplayName={game.display_name} />;
 	} else if (gameStateKind === "gaming" || gameStateKind === "finished") {
-		return (
-			<GolfWatchAppGaming
+		return game.game_type === "1v1" ? (
+			<GolfWatchAppGaming1v1
 				gameDisplayName={game.display_name}
-				playerProfileA={playerProfileA}
-				playerProfileB={playerProfileB}
+				playerProfileA={playerProfileA!}
+				playerProfileB={playerProfileB!}
+				problemTitle={game.problem.title}
+				problemDescription={game.problem.description}
+				gameResult={null /* TODO */}
+			/>
+		) : (
+			<GolfWatchAppGamingMultiplayer
+				gameDisplayName={game.display_name}
+				ranking={ranking}
 				problemTitle={game.problem.title}
 				problemDescription={game.problem.description}
 				gameResult={null /* TODO */}
