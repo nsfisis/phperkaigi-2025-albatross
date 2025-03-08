@@ -34,7 +34,7 @@
   </div>
   <div>
     <label>Started At</label>
-    <input type="datetime-local" name="started_at" value="{{ if .Game.StartedAt }}{{ .Game.StartedAt }}{{ end }}">
+    <input type="datetime-local" name="started_at" value="{{ if .Game.StartedAt }}{{ .Game.StartedAt }}{{ end }}" readonly>
   </div>
   <div>
     <label>Problem ID</label>
@@ -42,6 +42,9 @@
   </div>
   <div>
     <button type="submit">Save</button>
+  </div>
+  <div>
+    <button type="submit" formaction="{{ .BasePath }}/admin/games/{{ .Game.GameID }}/start">Start</button>
   </div>
 </form>
 {{ end }}

@@ -68,6 +68,7 @@ func (h *Handler) RegisterHandlers(g *echo.Group) {
 	g.GET("/games", h.getGames)
 	g.GET("/games/:gameID", h.getGameEdit)
 	g.POST("/games/:gameID", h.postGameEdit)
+	g.POST("/games/:gameID/start", h.postGameStart)
 }
 
 func (h *Handler) getDashboard(c echo.Context) error {
@@ -264,6 +265,28 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 		DurationSeconds: int32(durationSeconds),
 		StartedAt:       changedStartedAt,
 		ProblemID:       int32(problemID),
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.Redirect(http.StatusSeeOther, basePath+"/admin/games")
+}
+
+func (h *Handler) postGameStart(c echo.Context) error {
+	gameID, err := strconv.Atoi(c.Param("gameID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game id")
+	}
+
+	startedAt := time.Now().Add(11 * time.Second)
+
+	err = h.q.UpdateGameStartedAt(c.Request().Context(), db.UpdateGameStartedAtParams{
+		GameID: int32(gameID),
+		StartedAt: pgtype.Timestamp{
+			Time:  startedAt,
+			Valid: true,
+		},
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
