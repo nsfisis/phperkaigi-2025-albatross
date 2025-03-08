@@ -9,6 +9,7 @@ import {
 	ScrollRestoration,
 } from "@remix-run/react";
 import "./tailwind.css";
+import "./shiki.css";
 
 config.autoAddCss = false;
 

@@ -53,7 +53,9 @@ export default function GolfWatchAppGamingMultiplayer({
 							{problemTitle}
 						</div>
 						<BorderedContainer>
-							<pre>{problemDescription}</pre>
+							<pre className="text-gray-700 whitespace-pre-wrap break-words">
+								{problemDescription}
+							</pre>
 						</BorderedContainer>
 					</div>
 				</div>
