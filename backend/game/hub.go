@@ -38,7 +38,7 @@ func (hub *Hub) Run() {
 
 func (hub *Hub) CalcCodeSize(code string) int {
 	re := regexp.MustCompile(`\s+`)
-	return len(re.ReplaceAllString(code, ""))
+	return len(strings.TrimSuffix(strings.TrimPrefix(strings.TrimPrefix(re.ReplaceAllString(code, ""), "<?php"), "<?"), "?>"))
 }
 
 func (hub *Hub) EnqueueTestTasks(ctx context.Context, submissionID, gameID, userID int, code string) error {

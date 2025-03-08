@@ -1,12 +1,23 @@
 import PHPWasm from "./php-wasm.js";
 
-process.once("message", async ({ code, input }) => {
+process.once("message", async ({ code: originalCode, input }) => {
 	const PRELUDE = `
   define('STDIN', fopen('php://stdin', 'r'));
   define('STDOUT', fopen('php://stdout', 'r'));
   define('STDERR', fopen('php://stderr', 'r'));
 
   `;
+
+	// remove php tag
+	let code;
+	if (originalCode.startsWith("<?php")) {
+		code = PRELUDE + originalCode.slice(5);
+	} else if (originalCode.startsWith("<?")) {
+		code = PRELUDE + originalCode.slice(2);
+	} else {
+		code = PRELUDE + originalCode;
+	}
+
 	const BUFFER_MAX = 1024;
 
 	let stdinPos = 0; // bytewise
@@ -52,7 +63,7 @@ process.once("message", async ({ code, input }) => {
 	let err;
 	let result;
 	try {
-		result = ccall("php_wasm_run", "number", ["string"], [PRELUDE + code]);
+		result = ccall("php_wasm_run", "number", ["string"], [code]);
 	} catch (e) {
 		err = e;
 	}
