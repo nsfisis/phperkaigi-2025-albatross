@@ -6,7 +6,7 @@ const apiClient = createClient<paths>({
 	baseUrl:
 		process.env.NODE_ENV === "development"
 			? "http://localhost:8003/phperkaigi/2025/code-battle/api/"
-			: "http://api-server/phperkaigi/2025/code-battle/api/",
+			: "https://t.nil.ninja/phperkaigi/2025/code-battle/api/",
 });
 
 export async function apiPostLogin(username: string, password: string) {
