@@ -1,17 +1,17 @@
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (21, '0', '0'),
-    (21, '-100', '10000'),
-    (21, '123', '15129');
+    (1, '0', '0'),
+    (1, '-100', '10000'),
+    (1, '123', '15129');
 
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (22, $$9 3
+    (2, $$9 3
 $$, $$  1  2  3  4  5  6  7  8  9
   2  4  6  8 10 12 14 16 18
   3  6  9 12 15 18 21 24 27
 $$),
-    (22, $$10 20
+    (2, $$10 20
 $$, $$   1   2   3   4   5   6   7   8   9  10
    2   4   6   8  10  12  14  16  18  20
    3   6   9  12  15  18  21  24  27  30
@@ -36,7 +36,7 @@ $$);
 
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (23, $$るりいろ
+    (3, $$るりいろ
 りぬる
 いちにち
 ほへとちに
@@ -64,7 +64,7 @@ $$);
 
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (24, $$Foo,zzz
+    (4, $$Foo,zzz
 Foo,xxx
 Bar,ccc
 Bar,bbb
@@ -78,7 +78,7 @@ $$);
 
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (25, $$リンゴ
+    (5, $$リンゴ
 ライオン
 ゴリラ
 $$, $$リンゴ
@@ -86,7 +86,7 @@ $$, $$リンゴ
 ライオン
 負けました
 $$),
-    (25, $$リンゴ
+    (5, $$リンゴ
 ライオン
 ゴリラ
 $$, $$リンゴ
@@ -97,7 +97,7 @@ $$);
 
 INSERT INTO testcases (problem_id, stdin, stdout)
 VALUES
-    (26, $$ABC
+    (6, $$ABC
 Hello, world
 $$, $$7
 47
