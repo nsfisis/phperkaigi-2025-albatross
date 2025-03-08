@@ -78,6 +78,17 @@ services:
     env_file: [.env]
     restart: always
 
+  tools:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile.tools
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: eepei5reesoo0ov2ceelahd4Emi0au8ahJa6oochohheiquahweihoovahsee1oo
+      POSTGRES_DB: albatross
+    profiles:
+      - tools
+
 volumes:
   db-data:
   files-data:
