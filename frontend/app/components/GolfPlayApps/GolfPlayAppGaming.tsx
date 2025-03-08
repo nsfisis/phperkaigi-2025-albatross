@@ -85,7 +85,7 @@ export default function GolfPlayAppGaming({
 					<div className="mb-2 text-xl font-bold">{problemTitle}</div>
 					<div className="p-2 grid gap-4">
 						<BorderedContainer>
-							<div className="text-gray-700">{problemDescription}</div>
+							<pre className="text-gray-700">{problemDescription}</pre>
 						</BorderedContainer>
 						<BorderedContainer>
 							<div>

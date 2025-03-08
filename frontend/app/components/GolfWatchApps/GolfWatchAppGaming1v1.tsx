@@ -118,7 +118,9 @@ export default function GolfWatchAppGaming1v1({
 						<div className="mb-2 text-center text-xl font-bold">
 							{problemTitle}
 						</div>
-						<BorderedContainer>{problemDescription}</BorderedContainer>
+						<BorderedContainer>
+							<pre>{problemDescription}</pre>
+						</BorderedContainer>
 					</div>
 				</div>
 				<CodeBlock code={codeB} language="php" />
