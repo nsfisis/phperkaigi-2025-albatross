@@ -87,6 +87,7 @@ func (h *Handler) GetGames(ctx context.Context, _ GetGamesRequestObject, _ *auth
 				ProblemID:   int(row.ProblemID),
 				Title:       row.Title,
 				Description: row.Description,
+				SampleCode:  row.SampleCode,
 			},
 		}
 		gameIDs[i] = row.GameID
@@ -162,6 +163,7 @@ func (h *Handler) GetGame(ctx context.Context, request GetGameRequestObject, _ *
 			ProblemID:   int(row.ProblemID),
 			Title:       row.Title,
 			Description: row.Description,
+			SampleCode:  row.SampleCode,
 		},
 		MainPlayers: mainPlayers,
 	}
