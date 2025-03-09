@@ -70,23 +70,8 @@ JOIN users ON game_main_players.user_id = users.user_id
 WHERE game_main_players.game_id = ANY($1::INT[])
 ORDER BY game_main_players.user_id;
 
--- name: ListMainPlayerIDs :many
-SELECT user_id FROM game_main_players
-WHERE game_id = $1
-ORDER BY user_id;
-
--- name: GetSubmissionCodeSizeByID :one
-SELECT code_size FROM submissions
-WHERE submission_id = $1
-LIMIT 1;
-
 -- name: ListTestcasesByGameID :many
 SELECT * FROM testcases
-WHERE testcases.problem_id = (SELECT problem_id FROM games WHERE game_id = $1)
-ORDER BY testcases.testcase_id;
-
--- name: ListTestcaseIDsByGameID :many
-SELECT testcases.testcase_id FROM testcases
 WHERE testcases.problem_id = (SELECT problem_id FROM games WHERE game_id = $1)
 ORDER BY testcases.testcase_id;
 

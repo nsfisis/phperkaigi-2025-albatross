@@ -326,19 +326,6 @@ func (q *Queries) GetRanking(ctx context.Context, gameID int32) ([]GetRankingRow
 	return items, nil
 }
 
-const getSubmissionCodeSizeByID = `-- name: GetSubmissionCodeSizeByID :one
-SELECT code_size FROM submissions
-WHERE submission_id = $1
-LIMIT 1
-`
-
-func (q *Queries) GetSubmissionCodeSizeByID(ctx context.Context, submissionID int32) (int32, error) {
-	row := q.db.QueryRow(ctx, getSubmissionCodeSizeByID, submissionID)
-	var code_size int32
-	err := row.Scan(&code_size)
-	return code_size, err
-}
-
 const getUserAuthByUsername = `-- name: GetUserAuthByUsername :one
 SELECT users.user_id, username, display_name, icon_path, is_admin, created_at, user_auth_id, user_auths.user_id, auth_type, password_hash FROM users
 JOIN user_auths ON users.user_id = user_auths.user_id
@@ -444,32 +431,6 @@ func (q *Queries) ListAllGames(ctx context.Context) ([]Game, error) {
 	return items, nil
 }
 
-const listMainPlayerIDs = `-- name: ListMainPlayerIDs :many
-SELECT user_id FROM game_main_players
-WHERE game_id = $1
-ORDER BY user_id
-`
-
-func (q *Queries) ListMainPlayerIDs(ctx context.Context, gameID int32) ([]int32, error) {
-	rows, err := q.db.Query(ctx, listMainPlayerIDs, gameID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []int32
-	for rows.Next() {
-		var user_id int32
-		if err := rows.Scan(&user_id); err != nil {
-			return nil, err
-		}
-		items = append(items, user_id)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listMainPlayers = `-- name: ListMainPlayers :many
 SELECT game_id, game_main_players.user_id, users.user_id, username, display_name, icon_path, is_admin, created_at FROM game_main_players
 JOIN users ON game_main_players.user_id = users.user_id
@@ -565,32 +526,6 @@ func (q *Queries) ListPublicGames(ctx context.Context) ([]ListPublicGamesRow, er
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listTestcaseIDsByGameID = `-- name: ListTestcaseIDsByGameID :many
-SELECT testcases.testcase_id FROM testcases
-WHERE testcases.problem_id = (SELECT problem_id FROM games WHERE game_id = $1)
-ORDER BY testcases.testcase_id
-`
-
-func (q *Queries) ListTestcaseIDsByGameID(ctx context.Context, gameID int32) ([]int32, error) {
-	rows, err := q.db.Query(ctx, listTestcaseIDsByGameID, gameID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []int32
-	for rows.Next() {
-		var testcase_id int32
-		if err := rows.Scan(&testcase_id); err != nil {
-			return nil, err
-		}
-		items = append(items, testcase_id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
