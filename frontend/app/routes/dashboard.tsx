@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
+import { Form, useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
 import { apiGetGames } from "../api/client";
 import BorderedContainer from "../components/BorderedContainer";

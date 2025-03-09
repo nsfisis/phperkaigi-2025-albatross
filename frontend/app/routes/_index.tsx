@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { ensureUserNotLoggedIn } from "../.server/auth";
 import BorderedContainer from "../components/BorderedContainer";
 import NavigateLink from "../components/NavigateLink";

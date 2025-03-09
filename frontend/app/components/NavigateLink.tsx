@@ -1,4 +1,4 @@
-import { Link, LinkProps } from "@remix-run/react";
+import { Link, LinkProps } from "react-router";
 
 export default function NavigateLink(props: LinkProps) {
 	return (

@@ -2,8 +2,8 @@ import type {
 	ActionFunctionArgs,
 	LoaderFunctionArgs,
 	MetaFunction,
-} from "@remix-run/node";
-import { Form, json, useActionData } from "@remix-run/react";
+} from "react-router";
+import { Form, data, useActionData } from "react-router";
 import { ensureUserNotLoggedIn, login } from "../.server/auth";
 import BorderedContainer from "../components/BorderedContainer";
 import InputText from "../components/InputText";
@@ -22,7 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const username = String(formData.get("username"));
 	const password = String(formData.get("password"));
 	if (username === "" || password === "") {
-		return json(
+		return data(
 			{
 				message: "ユーザー名またはパスワードが誤っています",
 				errors: {
@@ -40,7 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		await login(request);
 	} catch (error) {
 		if (error instanceof Error) {
-			return json(
+			return data(
 				{
 					message: error.message,
 					errors: {

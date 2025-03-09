@@ -1,6 +1,6 @@
-import { Link } from "@remix-run/react";
 import { useAtomValue } from "jotai";
 import React, { useRef } from "react";
+import { Link } from "react-router";
 import SubmitButton from "../../components/SubmitButton";
 import {
 	gamingLeftTimeSecondsAtom,

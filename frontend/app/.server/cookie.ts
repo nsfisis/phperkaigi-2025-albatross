@@ -1,5 +1,5 @@
-import { Cookie, CookieOptions } from "@remix-run/server-runtime";
 import { parse as parseCookie, serialize as serializeCookie } from "cookie";
+import { Cookie, CookieOptions } from "react-router";
 
 // Remix's createCookie() returns "structured" cookies, which are cookies that hold a JSON-encoded object.
 // This is not suitable for interoperation with other systems that expect a simple string value.
