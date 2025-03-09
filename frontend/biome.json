@@ -7,7 +7,12 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["./.cache", "./build", "./app/api/schema.d.ts"]
+		"ignore": [
+			"./.cache",
+			"./build",
+			"./app/api/schema.d.ts",
+			"./app/shiki.bundle.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,
