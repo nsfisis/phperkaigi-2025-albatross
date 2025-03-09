@@ -74,7 +74,7 @@ export default function Dashboard() {
 			<Form method="post" action="/logout">
 				<button
 					type="submit"
-					className="px-4 py-2 bg-red-500 text-white rounded transition duration-300 hover:bg-red-700 focus:ring focus:ring-red-400 focus:outline-none"
+					className="px-4 py-2 bg-red-500 text-white rounded-sm transition duration-300 hover:bg-red-700 focus:ring-3 focus:ring-red-400 focus:outline-hidden"
 				>
 					ログアウト
 				</button>
@@ -86,7 +86,7 @@ export default function Dashboard() {
 							? "http://localhost:8003/phperkaigi/2025/code-battle/admin/dashboard"
 							: "/phperkaigi/2025/code-battle/admin/dashboard"
 					}
-					className="text-lg text-white bg-sky-600 px-4 py-2 rounded transition duration-300 hover:bg-sky-500 focus:ring focus:ring-sky-400 focus:outline-none"
+					className="text-lg text-white bg-sky-600 px-4 py-2 rounded-sm transition duration-300 hover:bg-sky-500 focus:ring-3 focus:ring-sky-400 focus:outline-hidden"
 				>
 					Admin Dashboard
 				</a>

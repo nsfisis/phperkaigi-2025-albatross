@@ -1,5 +1,5 @@
 import { Cookie, CookieOptions } from "@remix-run/server-runtime";
-import { parse, serialize } from "cookie";
+import { parse as parseCookie, serialize as serializeCookie } from "cookie";
 
 // Remix's createCookie() returns "structured" cookies, which are cookies that hold a JSON-encoded object.
 // This is not suitable for interoperation with other systems that expect a simple string value.
@@ -28,11 +28,14 @@ export function createUnstructuredCookie(
 		},
 		async parse(cookieHeader, parseOptions) {
 			if (!cookieHeader) return null;
-			const cookies = parse(cookieHeader, { ...options, ...parseOptions });
+			const cookies = parseCookie(cookieHeader, {
+				...options,
+				...parseOptions,
+			});
 			return name in cookies ? cookies[name] : null;
 		},
 		async serialize(value, serializeOptions) {
-			return serialize(name, value, {
+			return serializeCookie(name, value, {
 				...options,
 				...serializeOptions,
 			});

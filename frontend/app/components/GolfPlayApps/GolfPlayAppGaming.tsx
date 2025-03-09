@@ -102,7 +102,7 @@ export default function GolfPlayAppGaming({
 						ref={textareaRef}
 						defaultValue={initialCode}
 						onChange={handleTextChange}
-						className="resize-none h-full w-full rounded-lg border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-300"
+						className="resize-none h-full w-full rounded-lg border border-gray-300 p-2 focus:outline-hidden focus:ring-2 focus:ring-gray-400 transition duration-300"
 					/>
 				</div>
 				<div className="p-4">
