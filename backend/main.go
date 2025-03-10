@@ -75,8 +75,6 @@ func main() {
 	adminHandler.RegisterHandlers(adminGroup)
 
 	if config.isLocal {
-		// For local dev: This is never used in production because the reverse
-		// proxy directly handles /files.
 		filesGroup := e.Group("/phperkaigi/2025/code-battle/files")
 		filesGroup.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 			Root:       "/",
@@ -84,8 +82,6 @@ func main() {
 			IgnoreBase: true,
 		}))
 
-		// For local dev: This is never used in production because the reverse
-		// proxy sends these paths to the app server.
 		e.GET("/phperkaigi/2025/code-battle/*", func(c echo.Context) error {
 			return c.Redirect(http.StatusPermanentRedirect, "http://localhost:5173"+c.Request().URL.Path)
 		})
