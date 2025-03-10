@@ -101,19 +101,13 @@ func (h *Handler) GetGames(ctx context.Context, _ GetGamesRequestObject, _ *auth
 	for _, row := range mainPlayerRows {
 		idx := gameID2Index[row.GameID]
 		game := &games[idx]
-		var label nullable.Nullable[string]
-		if row.Label != nil {
-			label = nullable.NewNullableWithValue(*row.Label)
-		} else {
-			label = nullable.NewNullNullable[string]()
-		}
 		game.MainPlayers = append(game.MainPlayers, User{
 			UserID:      int(row.UserID),
 			Username:    row.Username,
 			DisplayName: row.DisplayName,
 			IconPath:    row.IconPath,
 			IsAdmin:     row.IsAdmin,
-			Label:       label,
+			Label:       toNullable(row.Label),
 		})
 	}
 	return GetGames200JSONResponse{
@@ -152,19 +146,13 @@ func (h *Handler) GetGame(ctx context.Context, request GetGameRequestObject, _ *
 	}
 	mainPlayers := make([]User, len(mainPlayerRows))
 	for i, playerRow := range mainPlayerRows {
-		var label nullable.Nullable[string]
-		if playerRow.Label != nil {
-			label = nullable.NewNullableWithValue(*playerRow.Label)
-		} else {
-			label = nullable.NewNullNullable[string]()
-		}
 		mainPlayers[i] = User{
 			UserID:      int(playerRow.UserID),
 			Username:    playerRow.Username,
 			DisplayName: playerRow.DisplayName,
 			IconPath:    playerRow.IconPath,
 			IsAdmin:     playerRow.IsAdmin,
-			Label:       label,
+			Label:       toNullable(playerRow.Label),
 		}
 	}
 	game := Game{
@@ -206,16 +194,10 @@ func (h *Handler) GetGamePlayLatestState(ctx context.Context, request GetGamePla
 		}
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	var score nullable.Nullable[int]
-	if row.CodeSize != nil {
-		score = nullable.NewNullableWithValue(int(*row.CodeSize))
-	} else {
-		score = nullable.NewNullNullable[int]()
-	}
 	return GetGamePlayLatestState200JSONResponse{
 		State: LatestGameState{
 			Code:   row.Code,
-			Score:  score,
+			Score:  toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
 			Status: ExecutionStatus(row.Status),
 		},
 	}, nil
@@ -233,12 +215,6 @@ func (h *Handler) GetGameWatchLatestStates(ctx context.Context, request GetGameW
 		if row.Code != nil {
 			code = *row.Code
 		}
-		var score nullable.Nullable[int]
-		if row.CodeSize != nil {
-			score = nullable.NewNullableWithValue(int(*row.CodeSize))
-		} else {
-			score = nullable.NewNullNullable[int]()
-		}
 		var status ExecutionStatus
 		if row.Status != nil {
 			status = ExecutionStatus(*row.Status)
@@ -247,7 +223,7 @@ func (h *Handler) GetGameWatchLatestStates(ctx context.Context, request GetGameW
 		}
 		states[strconv.Itoa(int(row.UserID))] = LatestGameState{
 			Code:   code,
-			Score:  score,
+			Score:  toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
 			Status: status,
 		}
 
@@ -274,12 +250,6 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 	}
 	ranking := make([]RankingEntry, len(rows))
 	for i, row := range rows {
-		var label nullable.Nullable[string]
-		if row.Label != nil {
-			label = nullable.NewNullableWithValue(*row.Label)
-		} else {
-			label = nullable.NewNullNullable[string]()
-		}
 		ranking[i] = RankingEntry{
 			Player: User{
 				UserID:      int(row.UserID),
@@ -287,7 +257,7 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 				DisplayName: row.DisplayName,
 				IconPath:    row.IconPath,
 				IsAdmin:     row.IsAdmin,
-				Label:       label,
+				Label:       toNullable(row.Label),
 			},
 			Score: int(row.CodeSize),
 		}
@@ -341,4 +311,18 @@ func (h *Handler) PostGamePlaySubmit(ctx context.Context, request PostGamePlaySu
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	return PostGamePlaySubmit200Response{}, nil
+}
+
+func toNullable[T any](p *T) nullable.Nullable[T] {
+	if p == nil {
+		return nullable.NewNullNullable[T]()
+	}
+	return nullable.NewNullableWithValue(*p)
+}
+
+func toNullableWith[T, U any](p *T, f func(T) U) nullable.Nullable[U] {
+	if p == nil {
+		return nullable.NewNullNullable[U]()
+	}
+	return nullable.NewNullableWithValue(f(*p))
 }
