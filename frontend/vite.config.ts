@@ -4,5 +4,6 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+	base: "/phperkaigi/2025/code-battle/",
 	plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
 });
