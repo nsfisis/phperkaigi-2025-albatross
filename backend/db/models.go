@@ -72,6 +72,7 @@ type User struct {
 	DisplayName string
 	IconPath    *string
 	IsAdmin     bool
+	Label       *string
 	CreatedAt   pgtype.Timestamp
 }
 

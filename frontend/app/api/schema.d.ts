@@ -159,6 +159,8 @@ export interface components {
             icon_path?: string;
             /** @example false */
             is_admin: boolean;
+            /** @example staff */
+            label: string | null;
         };
         Game: {
             /** @example 1 */

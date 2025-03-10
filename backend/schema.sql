@@ -4,6 +4,7 @@ CREATE TABLE users (
     display_name VARCHAR(64) NOT NULL,
     icon_path    VARCHAR(255),
     is_admin     BOOLEAN     NOT NULL,
+    label        VARCHAR(16),
     created_at   TIMESTAMP   NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_users_username ON users(username);

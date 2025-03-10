@@ -2,6 +2,7 @@ import { useAtomValue } from "jotai";
 import type { components } from "../../api/schema";
 import { gamingLeftTimeSecondsAtom } from "../../states/watch";
 import BorderedContainer from "../BorderedContainer";
+import UserLabel from "../UserLabel";
 
 type RankingEntry = components["schemas"]["RankingEntry"];
 
@@ -91,6 +92,9 @@ export default function GolfWatchAppGamingMultiplayer({
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-gray-900">
 										{entry.player.display_name}
+										{entry.player.label && (
+											<UserLabel label={entry.player.label} />
+										)}
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-gray-900">
 										{entry.score}

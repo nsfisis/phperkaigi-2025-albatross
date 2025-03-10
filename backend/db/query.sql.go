@@ -259,7 +259,7 @@ func (q *Queries) GetLatestStatesOfMainPlayers(ctx context.Context, gameID int32
 }
 
 const getRanking = `-- name: GetRanking :many
-SELECT game_states.game_id, game_states.user_id, game_states.code, game_states.status, best_score_submission_id, users.user_id, username, display_name, icon_path, is_admin, users.created_at, submission_id, submissions.game_id, submissions.user_id, submissions.code, code_size, submissions.status, submissions.created_at FROM game_states
+SELECT game_states.game_id, game_states.user_id, game_states.code, game_states.status, best_score_submission_id, users.user_id, username, display_name, icon_path, is_admin, label, users.created_at, submission_id, submissions.game_id, submissions.user_id, submissions.code, code_size, submissions.status, submissions.created_at FROM game_states
 JOIN users ON game_states.user_id = users.user_id
 JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
 WHERE game_states.game_id = $1
@@ -277,6 +277,7 @@ type GetRankingRow struct {
 	DisplayName           string
 	IconPath              *string
 	IsAdmin               bool
+	Label                 *string
 	CreatedAt             pgtype.Timestamp
 	SubmissionID          int32
 	GameID_2              int32
@@ -307,6 +308,7 @@ func (q *Queries) GetRanking(ctx context.Context, gameID int32) ([]GetRankingRow
 			&i.DisplayName,
 			&i.IconPath,
 			&i.IsAdmin,
+			&i.Label,
 			&i.CreatedAt,
 			&i.SubmissionID,
 			&i.GameID_2,
@@ -327,7 +329,7 @@ func (q *Queries) GetRanking(ctx context.Context, gameID int32) ([]GetRankingRow
 }
 
 const getUserAuthByUsername = `-- name: GetUserAuthByUsername :one
-SELECT users.user_id, username, display_name, icon_path, is_admin, created_at, user_auth_id, user_auths.user_id, auth_type, password_hash FROM users
+SELECT users.user_id, username, display_name, icon_path, is_admin, label, created_at, user_auth_id, user_auths.user_id, auth_type, password_hash FROM users
 JOIN user_auths ON users.user_id = user_auths.user_id
 WHERE users.username = $1
 LIMIT 1
@@ -339,6 +341,7 @@ type GetUserAuthByUsernameRow struct {
 	DisplayName  string
 	IconPath     *string
 	IsAdmin      bool
+	Label        *string
 	CreatedAt    pgtype.Timestamp
 	UserAuthID   int32
 	UserID_2     int32
@@ -355,6 +358,7 @@ func (q *Queries) GetUserAuthByUsername(ctx context.Context, username string) (G
 		&i.DisplayName,
 		&i.IconPath,
 		&i.IsAdmin,
+		&i.Label,
 		&i.CreatedAt,
 		&i.UserAuthID,
 		&i.UserID_2,
@@ -365,7 +369,7 @@ func (q *Queries) GetUserAuthByUsername(ctx context.Context, username string) (G
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT user_id, username, display_name, icon_path, is_admin, created_at FROM users
+SELECT user_id, username, display_name, icon_path, is_admin, label, created_at FROM users
 WHERE users.user_id = $1
 LIMIT 1
 `
@@ -379,6 +383,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 		&i.DisplayName,
 		&i.IconPath,
 		&i.IsAdmin,
+		&i.Label,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -432,7 +437,7 @@ func (q *Queries) ListAllGames(ctx context.Context) ([]Game, error) {
 }
 
 const listMainPlayers = `-- name: ListMainPlayers :many
-SELECT game_id, game_main_players.user_id, users.user_id, username, display_name, icon_path, is_admin, created_at FROM game_main_players
+SELECT game_id, game_main_players.user_id, users.user_id, username, display_name, icon_path, is_admin, label, created_at FROM game_main_players
 JOIN users ON game_main_players.user_id = users.user_id
 WHERE game_main_players.game_id = ANY($1::INT[])
 ORDER BY game_main_players.user_id
@@ -446,6 +451,7 @@ type ListMainPlayersRow struct {
 	DisplayName string
 	IconPath    *string
 	IsAdmin     bool
+	Label       *string
 	CreatedAt   pgtype.Timestamp
 }
 
@@ -466,6 +472,7 @@ func (q *Queries) ListMainPlayers(ctx context.Context, dollar_1 []int32) ([]List
 			&i.DisplayName,
 			&i.IconPath,
 			&i.IsAdmin,
+			&i.Label,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -565,7 +572,7 @@ func (q *Queries) ListTestcasesByGameID(ctx context.Context, gameID int32) ([]Te
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT user_id, username, display_name, icon_path, is_admin, created_at FROM users
+SELECT user_id, username, display_name, icon_path, is_admin, label, created_at FROM users
 ORDER BY users.user_id
 `
 
@@ -584,6 +591,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.DisplayName,
 			&i.IconPath,
 			&i.IsAdmin,
+			&i.Label,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err

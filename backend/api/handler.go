@@ -101,12 +101,19 @@ func (h *Handler) GetGames(ctx context.Context, _ GetGamesRequestObject, _ *auth
 	for _, row := range mainPlayerRows {
 		idx := gameID2Index[row.GameID]
 		game := &games[idx]
+		var label nullable.Nullable[string]
+		if row.Label != nil {
+			label = nullable.NewNullableWithValue(*row.Label)
+		} else {
+			label = nullable.NewNullNullable[string]()
+		}
 		game.MainPlayers = append(game.MainPlayers, User{
 			UserID:      int(row.UserID),
 			Username:    row.Username,
 			DisplayName: row.DisplayName,
 			IconPath:    row.IconPath,
 			IsAdmin:     row.IsAdmin,
+			Label:       label,
 		})
 	}
 	return GetGames200JSONResponse{
@@ -145,12 +152,19 @@ func (h *Handler) GetGame(ctx context.Context, request GetGameRequestObject, _ *
 	}
 	mainPlayers := make([]User, len(mainPlayerRows))
 	for i, playerRow := range mainPlayerRows {
+		var label nullable.Nullable[string]
+		if playerRow.Label != nil {
+			label = nullable.NewNullableWithValue(*playerRow.Label)
+		} else {
+			label = nullable.NewNullNullable[string]()
+		}
 		mainPlayers[i] = User{
 			UserID:      int(playerRow.UserID),
 			Username:    playerRow.Username,
 			DisplayName: playerRow.DisplayName,
 			IconPath:    playerRow.IconPath,
 			IsAdmin:     playerRow.IsAdmin,
+			Label:       label,
 		}
 	}
 	game := Game{
@@ -260,6 +274,12 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 	}
 	ranking := make([]RankingEntry, len(rows))
 	for i, row := range rows {
+		var label nullable.Nullable[string]
+		if row.Label != nil {
+			label = nullable.NewNullableWithValue(*row.Label)
+		} else {
+			label = nullable.NewNullNullable[string]()
+		}
 		ranking[i] = RankingEntry{
 			Player: User{
 				UserID:      int(row.UserID),
@@ -267,6 +287,7 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 				DisplayName: row.DisplayName,
 				IconPath:    row.IconPath,
 				IsAdmin:     row.IsAdmin,
+				Label:       label,
 			},
 			Score: int(row.CodeSize),
 		}

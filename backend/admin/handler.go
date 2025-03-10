@@ -123,6 +123,7 @@ func (h *Handler) getUserEdit(c echo.Context) error {
 			"DisplayName": row.DisplayName,
 			"IconPath":    row.IconPath,
 			"IsAdmin":     row.IsAdmin,
+			"Label":       row.Label,
 		},
 	})
 }

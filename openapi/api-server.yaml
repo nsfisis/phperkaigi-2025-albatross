@@ -288,11 +288,16 @@ components:
         is_admin:
           type: boolean
           example: false
+        label:
+          type: string
+          nullable: true
+          example: "staff"
       required:
         - user_id
         - username
         - display_name
         - is_admin
+        - label
     Game:
       type: object
       properties:
