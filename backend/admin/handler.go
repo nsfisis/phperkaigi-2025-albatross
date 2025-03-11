@@ -219,7 +219,7 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 	}
 
 	gameType := c.FormValue("game_type")
-	isPublic := c.FormValue("is_public") == "public"
+	isPublic := (c.FormValue("is_public") != "")
 	displayName := c.FormValue("display_name")
 	durationSeconds, err := strconv.Atoi(c.FormValue("duration_seconds"))
 	if err != nil {
