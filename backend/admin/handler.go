@@ -238,11 +238,12 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 	{
 		startedAtRaw := c.FormValue("started_at")
 		if startedAtRaw != "" {
-			startedAtTime, err := time.Parse("2006-01-02T15:04", startedAtRaw)
+			startedAtJST, err := time.ParseInLocation("2006-01-02T15:04", startedAtRaw, jst)
 			if err != nil {
 				return echo.NewHTTPError(http.StatusBadRequest, "Invalid started_at")
 			}
-			startedAt = &startedAtTime
+			startedAtUTC := startedAtJST.UTC()
+			startedAt = &startedAtUTC
 		}
 	}
 
