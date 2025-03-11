@@ -733,6 +733,35 @@ func (q *Queries) UpdateSubmissionStatus(ctx context.Context, arg UpdateSubmissi
 	return err
 }
 
+const updateUser = `-- name: UpdateUser :exec
+UPDATE users
+SET
+    display_name = $2,
+    icon_path = $3,
+    is_admin = $4,
+    label = $5
+WHERE user_id = $1
+`
+
+type UpdateUserParams struct {
+	UserID      int32
+	DisplayName string
+	IconPath    *string
+	IsAdmin     bool
+	Label       *string
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.Exec(ctx, updateUser,
+		arg.UserID,
+		arg.DisplayName,
+		arg.IconPath,
+		arg.IsAdmin,
+		arg.Label,
+	)
+	return err
+}
+
 const updateUserIconPath = `-- name: UpdateUserIconPath :exec
 UPDATE users
 SET icon_path = $2

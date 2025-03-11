@@ -28,6 +28,15 @@ JOIN user_auths ON users.user_id = user_auths.user_id
 WHERE users.username = $1
 LIMIT 1;
 
+-- name: UpdateUser :exec
+UPDATE users
+SET
+    display_name = $2,
+    icon_path = $3,
+    is_admin = $4,
+    label = $5
+WHERE user_id = $1;
+
 -- name: CreateUserAuth :exec
 INSERT INTO user_auths (user_id, auth_type)
 VALUES ($1, $2);

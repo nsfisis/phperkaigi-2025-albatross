@@ -64,6 +64,7 @@ func (h *Handler) RegisterHandlers(g *echo.Group) {
 	g.GET("/dashboard", h.getDashboard)
 	g.GET("/users", h.getUsers)
 	g.GET("/users/:userID", h.getUserEdit)
+	g.POST("/users/:userID", h.postUserEdit)
 	g.POST("/users/:userID/fetch-icon", h.postUserFetchIcon)
 	g.GET("/games", h.getGames)
 	g.GET("/games/:gameID", h.getGameEdit)
@@ -126,6 +127,40 @@ func (h *Handler) getUserEdit(c echo.Context) error {
 			"Label":       row.Label,
 		},
 	})
+}
+
+func (h *Handler) postUserEdit(c echo.Context) error {
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid user_id")
+	}
+
+	displayName := c.FormValue("display_name")
+	iconPathRaw := c.FormValue("icon_path")
+	isAdmin := (c.FormValue("is_admin") != "")
+	labelRaw := c.FormValue("label")
+
+	var iconPath *string
+	if iconPathRaw != "" {
+		iconPath = &iconPathRaw
+	}
+	var label *string
+	if labelRaw != "" {
+		label = &labelRaw
+	}
+
+	err = h.q.UpdateUser(c.Request().Context(), db.UpdateUserParams{
+		UserID:      int32(userID),
+		DisplayName: displayName,
+		IconPath:    iconPath,
+		IsAdmin:     isAdmin,
+		Label:       label,
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.Redirect(http.StatusSeeOther, basePath+"/admin/users")
 }
 
 func (h *Handler) postUserFetchIcon(c echo.Context) error {
