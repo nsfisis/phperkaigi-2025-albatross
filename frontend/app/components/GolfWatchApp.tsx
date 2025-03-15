@@ -17,6 +17,7 @@ import {
 } from "../states/watch";
 import GolfWatchAppGaming1v1 from "./GolfWatchApps/GolfWatchAppGaming1v1";
 import GolfWatchAppGamingMultiplayer from "./GolfWatchApps/GolfWatchAppGamingMultiplayer";
+import GolfWatchAppLoading from "./GolfWatchApps/GolfWatchAppLoading";
 import GolfWatchAppStarting from "./GolfWatchApps/GolfWatchAppStarting";
 import GolfWatchAppWaiting1v1 from "./GolfWatchApps/GolfWatchAppWaiting1v1";
 import GolfWatchAppWaitingMultiplayer from "./GolfWatchApps/GolfWatchAppWaitingMultiplayer";
@@ -106,7 +107,9 @@ export default function GolfWatchApp({ game }: Props) {
 		setRanking,
 	]);
 
-	if (gameStateKind === "waiting") {
+	if (gameStateKind === "loading") {
+		return <GolfWatchAppLoading />;
+	} else if (gameStateKind === "waiting") {
 		return game.game_type === "1v1" ? (
 			<GolfWatchAppWaiting1v1
 				gameDisplayName={game.display_name}
@@ -139,7 +142,5 @@ export default function GolfWatchApp({ game }: Props) {
 				gameResult={null /* TODO */}
 			/>
 		);
-	} else {
-		return null;
 	}
 }

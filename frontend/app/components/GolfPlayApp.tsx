@@ -20,6 +20,7 @@ import {
 } from "../states/play";
 import GolfPlayAppFinished from "./GolfPlayApps/GolfPlayAppFinished";
 import GolfPlayAppGaming from "./GolfPlayApps/GolfPlayAppGaming";
+import GolfPlayAppLoading from "./GolfPlayApps/GolfPlayAppLoading";
 import GolfPlayAppStarting from "./GolfPlayApps/GolfPlayAppStarting";
 import GolfPlayAppWaiting from "./GolfPlayApps/GolfPlayAppWaiting";
 
@@ -111,7 +112,9 @@ export default function GolfPlayApp({ game, player, initialCode }: Props) {
 		setLatestGameState,
 	]);
 
-	if (gameStateKind === "waiting") {
+	if (gameStateKind === "loading") {
+		return <GolfPlayAppLoading />;
+	} else if (gameStateKind === "waiting") {
 		return (
 			<GolfPlayAppWaiting
 				gameDisplayName={game.display_name}
@@ -135,7 +138,5 @@ export default function GolfPlayApp({ game, player, initialCode }: Props) {
 		);
 	} else if (gameStateKind === "finished") {
 		return <GolfPlayAppFinished />;
-	} else {
-		return null;
 	}
 }

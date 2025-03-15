@@ -11,7 +11,6 @@ import {
 import GolfWatchApp from "../components/GolfWatchApp";
 import {
 	rankingAtom,
-	setCurrentTimestampAtom,
 	setDurationSecondsAtom,
 	setGameStartedAtAtom,
 	setLatestGameStatesAtom,
@@ -60,7 +59,6 @@ export default function GolfWatch() {
 
 	useHydrateAtoms([
 		[rankingAtom, ranking],
-		[setCurrentTimestampAtom, undefined],
 		[setDurationSecondsAtom, game.duration_seconds],
 		[setGameStartedAtAtom, game.started_at ?? null],
 		[setLatestGameStatesAtom, gameStates],

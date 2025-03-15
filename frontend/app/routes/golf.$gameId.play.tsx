@@ -9,7 +9,6 @@ import {
 } from "../api/client";
 import GolfPlayApp from "../components/GolfPlayApp";
 import {
-	setCurrentTimestampAtom,
 	setDurationSecondsAtom,
 	setGameStartedAtAtom,
 	setLatestGameStateAtom,
@@ -50,7 +49,6 @@ export default function GolfPlay() {
 		useLoaderData<typeof loader>();
 
 	useHydrateAtoms([
-		[setCurrentTimestampAtom, undefined],
 		[setDurationSecondsAtom, game.duration_seconds],
 		[setGameStartedAtAtom, game.started_at ?? null],
 		[setLatestGameStateAtom, gameState],

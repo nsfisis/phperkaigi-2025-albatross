@@ -6,7 +6,12 @@ export const setGameStartedAtAtom = atom(null, (_, set, value: number | null) =>
 	set(gameStartedAtAtom, value),
 );
 
-export type GameStateKind = "waiting" | "starting" | "gaming" | "finished";
+export type GameStateKind =
+	| "loading"
+	| "waiting"
+	| "starting"
+	| "gaming"
+	| "finished";
 type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 type LatestGameState = components["schemas"]["LatestGameState"];
 
@@ -16,9 +21,12 @@ export const gameStateKindAtom = atom<GameStateKind>((get) => {
 		return "waiting";
 	}
 
+	const now = get(currentTimestampAtom);
+	if (!now) {
+		return "loading";
+	}
 	const durationSeconds = get(durationSecondsAtom);
 	const finishedAt = startedAt + durationSeconds;
-	const now = get(currentTimestampAtom);
 	if (now < startedAt) {
 		return "starting";
 	} else if (now < finishedAt) {
@@ -28,7 +36,7 @@ export const gameStateKindAtom = atom<GameStateKind>((get) => {
 	}
 });
 
-const currentTimestampAtom = atom(0);
+const currentTimestampAtom = atom<number | null>(null);
 export const setCurrentTimestampAtom = atom(null, (_, set) =>
 	set(currentTimestampAtom, Math.floor(Date.now() / 1000)),
 );
@@ -44,6 +52,9 @@ export const startingLeftTimeSecondsAtom = atom<number | null>((get) => {
 		return null;
 	}
 	const currentTimestamp = get(currentTimestampAtom);
+	if (currentTimestamp === null) {
+		return null;
+	}
 	return Math.max(0, startedAt - currentTimestamp);
 });
 
@@ -55,6 +66,9 @@ export const gamingLeftTimeSecondsAtom = atom<number | null>((get) => {
 	const durationSeconds = get(durationSecondsAtom);
 	const finishedAt = startedAt + durationSeconds;
 	const currentTimestamp = get(currentTimestampAtom);
+	if (currentTimestamp === null) {
+		return null;
+	}
 	return Math.min(durationSeconds, Math.max(0, finishedAt - currentTimestamp));
 });
 
@@ -72,13 +86,12 @@ export const scoreAtom = atom<number | null>((get) => {
 	return get(rawScoreAtom);
 });
 
-const rawIsSubmittingCodeAtom = atom(false);
-export const isSubmittingCodeAtom = atom((get) => get(rawIsSubmittingCodeAtom));
+const isSubmittingCodeAtom = atom(false);
 export const handleSubmitCodePreAtom = atom(null, (_, set) => {
-	set(rawIsSubmittingCodeAtom, true);
+	set(isSubmittingCodeAtom, true);
 });
 export const handleSubmitCodePostAtom = atom(null, (_, set) => {
-	set(rawIsSubmittingCodeAtom, false);
+	set(isSubmittingCodeAtom, false);
 });
 
 export const setLatestGameStateAtom = atom(
