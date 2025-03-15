@@ -38,6 +38,24 @@
     <input type="text" name="problem_id" value="{{ .Game.ProblemID }}">
   </div>
   <div>
+    <label>Main Player 1</label>
+    <select name="main_player_1">
+      <option value="0"{{ if eq $.Game.MainPlayer1 0 }} selected{{ end }}>none</option>
+      {{ range .Users }}
+        <option value="{{ .UserID }}"{{ if eq $.Game.MainPlayer1 .UserID }} selected{{ end }}>{{ .Username }} (uid={{ .UserID }})</option>
+      {{ end }}
+    </select>
+  </div>
+  <div>
+    <label>Main Player 2</label>
+    <select name="main_player_2">
+      <option value="0"{{ if eq $.Game.MainPlayer2 0 }} selected{{ end }}>none</option>
+      {{ range .Users }}
+        <option value="{{ .UserID }}"{{ if eq $.Game.MainPlayer2 .UserID }} selected{{ end }}>{{ .Username }} (uid={{ .UserID }})</option>
+      {{ end }}
+    </select>
+  </div>
+  <div>
     <button type="submit">Save</button>
   </div>
   <div>

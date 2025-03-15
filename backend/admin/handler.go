@@ -232,6 +232,35 @@ func (h *Handler) getGameEdit(c echo.Context) error {
 		startedAt = row.StartedAt.Time.In(jst).Format("2006-01-02T15:04")
 	}
 
+	mainPlayerRows, err := h.q.ListMainPlayers(c.Request().Context(), []int32{int32(gameID)})
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+	}
+	mainPlayer1 := 0
+	if len(mainPlayerRows) > 0 {
+		mainPlayer1 = int(mainPlayerRows[0].UserID)
+	}
+	mainPlayer2 := 0
+	if len(mainPlayerRows) > 1 {
+		mainPlayer2 = int(mainPlayerRows[1].UserID)
+	}
+
+	userRows, err := h.q.ListUsers(c.Request().Context())
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+	}
+	var users []echo.Map
+	for _, r := range userRows {
+		users = append(users, echo.Map{
+			"UserID":   int(r.UserID),
+			"Username": r.Username,
+		})
+	}
+
 	return c.Render(http.StatusOK, "game_edit", echo.Map{
 		"BasePath": basePath,
 		"Title":    "Game Edit",
@@ -243,7 +272,10 @@ func (h *Handler) getGameEdit(c echo.Context) error {
 			"DurationSeconds": row.DurationSeconds,
 			"StartedAt":       startedAt,
 			"ProblemID":       row.ProblemID,
+			"MainPlayer1":     mainPlayer1,
+			"MainPlayer2":     mainPlayer2,
 		},
+		"Users": users,
 	})
 }
 
@@ -305,6 +337,38 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	mainPlayers := []int{}
+	mainPlayer1Raw := c.FormValue("main_player_1")
+	if mainPlayer1Raw != "" && mainPlayer1Raw != "0" {
+		mainPlayer1, err := strconv.Atoi(mainPlayer1Raw)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid main_player_1")
+		}
+		mainPlayers = append(mainPlayers, mainPlayer1)
+	}
+	mainPlayer2Raw := c.FormValue("main_player_2")
+	if mainPlayer2Raw != "" && mainPlayer2Raw != "0" {
+		mainPlayer2, err := strconv.Atoi(mainPlayer2Raw)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid main_player_2")
+		}
+		mainPlayers = append(mainPlayers, mainPlayer2)
+	}
+
+	err = h.q.RemoveAllMainPlayers(c.Request().Context(), int32(gameID))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	for _, userID := range mainPlayers {
+		err = h.q.AddMainPlayer(c.Request().Context(), db.AddMainPlayerParams{
+			GameID: int32(gameID),
+			UserID: int32(userID),
+		})
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
 	}
 
 	return c.Redirect(http.StatusSeeOther, basePath+"/admin/games")

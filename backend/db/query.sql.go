@@ -11,6 +11,21 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addMainPlayer = `-- name: AddMainPlayer :exec
+INSERT INTO game_main_players (game_id, user_id)
+VALUES ($1, $2)
+`
+
+type AddMainPlayerParams struct {
+	GameID int32
+	UserID int32
+}
+
+func (q *Queries) AddMainPlayer(ctx context.Context, arg AddMainPlayerParams) error {
+	_, err := q.db.Exec(ctx, addMainPlayer, arg.GameID, arg.UserID)
+	return err
+}
+
 const aggregateTestcaseResults = `-- name: AggregateTestcaseResults :one
 SELECT
     CASE
@@ -602,6 +617,16 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const removeAllMainPlayers = `-- name: RemoveAllMainPlayers :exec
+DELETE FROM game_main_players
+WHERE game_id = $1
+`
+
+func (q *Queries) RemoveAllMainPlayers(ctx context.Context, gameID int32) error {
+	_, err := q.db.Exec(ctx, removeAllMainPlayers, gameID)
+	return err
 }
 
 const syncGameStateBestScoreSubmission = `-- name: SyncGameStateBestScoreSubmission :exec
