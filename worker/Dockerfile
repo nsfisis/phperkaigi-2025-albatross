@@ -72,9 +72,11 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=wasm-builder /src/php-wasm.js /src/php-wasm.wasm /app/
-COPY index.mjs exec.mjs package.json package-lock.json /app/
+COPY package.json package-lock.json /app/
 
 RUN npm install
+
+COPY index.mjs exec.mjs /app/
 
 ENTRYPOINT ["node", "index.mjs"]
 EXPOSE 80

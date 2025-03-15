@@ -6,6 +6,8 @@ process.once("message", async ({ code: originalCode, input }) => {
   define('STDOUT', fopen('php://stdout', 'r'));
   define('STDERR', fopen('php://stderr', 'r'));
 
+  error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED);
+
   `;
 
 	// remove php tag
