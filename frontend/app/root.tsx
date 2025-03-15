@@ -24,6 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				{children}
 				<ScrollRestoration />
 				<Scripts />
+				<script>console.log(`#Albatross!`)</script>
 			</body>
 		</html>
 	);
