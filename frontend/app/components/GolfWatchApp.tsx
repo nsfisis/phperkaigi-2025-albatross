@@ -139,7 +139,6 @@ export default function GolfWatchApp({ game }: Props) {
 				problemTitle={game.problem.title}
 				problemDescription={game.problem.description}
 				sampleCode={game.problem.sample_code}
-				gameResult={null /* TODO */}
 			/>
 		);
 	}

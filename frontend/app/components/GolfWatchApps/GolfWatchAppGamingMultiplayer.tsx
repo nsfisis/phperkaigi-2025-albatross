@@ -13,7 +13,6 @@ type Props = {
 	problemTitle: string;
 	problemDescription: string;
 	sampleCode: string;
-	gameResult: "winA" | "winB" | "draw" | null;
 };
 
 export default function GolfWatchAppGamingMultiplayer({
@@ -22,21 +21,12 @@ export default function GolfWatchAppGamingMultiplayer({
 	problemTitle,
 	problemDescription,
 	sampleCode,
-	gameResult,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 
-	const topBg = gameResult
-		? gameResult === "winA"
-			? "bg-orange-400"
-			: gameResult === "winB"
-				? "bg-purple-400"
-				: "bg-pink-500"
-		: "bg-sky-600";
-
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
-			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
+			<div className={`text-white bg-sky-600 grid grid-cols-3 px-4 py-2`}>
 				<div className="font-bold flex justify-between my-auto"></div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
