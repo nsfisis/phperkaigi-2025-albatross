@@ -20,7 +20,7 @@ process.once("message", async ({ code: originalCode, input }) => {
 		code = PRELUDE + originalCode;
 	}
 
-	const BUFFER_MAX = 1024;
+	const BUFFER_MAX = 10 * 1024;
 
 	let stdinPos = 0; // bytewise
 	const stdinBuf = Buffer.from(input);
