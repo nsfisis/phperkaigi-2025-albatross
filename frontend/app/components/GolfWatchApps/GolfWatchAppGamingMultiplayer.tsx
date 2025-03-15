@@ -88,7 +88,9 @@ export default function GolfWatchAppGamingMultiplayer({
 									<td className="px-6 py-4 whitespace-nowrap text-gray-900">
 										{entry.player.display_name}
 										{entry.player.label && (
-											<UserLabel label={entry.player.label} />
+											<span className="mx-2">
+												<UserLabel label={entry.player.label} />
+											</span>
 										)}
 									</td>
 									<td className="px-6 py-4 whitespace-nowrap text-gray-900">
