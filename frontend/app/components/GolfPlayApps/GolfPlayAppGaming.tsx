@@ -8,10 +8,10 @@ import {
 	statusAtom,
 } from "../../states/play";
 import type { PlayerProfile } from "../../types/PlayerProfile";
+import BorderedContainer from "../BorderedContainer";
 import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
-import SubmitResult from "../Gaming/SubmitResult";
-import BorderedContainer from "../BorderedContainer";
+import SubmitStatusLabel from "../SubmitStatusLabel";
 import UserIcon from "../UserIcon";
 
 function calcCodeSize(code: string): number {
@@ -112,7 +112,33 @@ export default function GolfPlayAppGaming({
 				</div>
 				<div className="p-4 flex flex-col gap-4">
 					<div className="text-center text-xl font-bold">提出結果</div>
-					<SubmitResult status={status} />
+					<div className="overflow-hidden border-2 border-blue-600 rounded-xl">
+						<table className="min-w-full divide-y divide-gray-400 border-collapse">
+							<thead className="bg-gray-50">
+								<tr>
+									<th
+										scope="col"
+										className="px-6 py-3 text-left font-medium text-gray-800"
+									>
+										ステータス
+									</th>
+								</tr>
+							</thead>
+							<tbody className="bg-white divide-y divide-gray-300">
+								{[status].map((status) => (
+									<tr key={99999}>
+										<td className="px-6 py-4 whitespace-nowrap text-gray-900">
+											<SubmitStatusLabel status={status} />
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<p>
+						NOTE:
+						過去の提出結果を閲覧する機能は現在実装中です。それまでは提出コードをお手元に保管しておいてください。
+					</p>
 				</div>
 			</div>
 		</div>
