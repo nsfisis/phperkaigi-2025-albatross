@@ -15,11 +15,13 @@ import SubmitStatusLabel from "../SubmitStatusLabel";
 import UserIcon from "../UserIcon";
 
 function calcCodeSize(code: string): number {
-	return code
+	const trimmed = code
 		.replace(/\s+/g, "")
 		.replace(/^<\?php/, "")
 		.replace(/^<\?/, "")
-		.replace(/\?>$/, "").length;
+		.replace(/\?>$/, "");
+	const utf8Encoded = new TextEncoder().encode(trimmed);
+	return utf8Encoded.length;
 }
 
 type Props = {
