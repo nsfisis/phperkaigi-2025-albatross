@@ -4,8 +4,8 @@ import {
 	latestGameStatesAtom,
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
-import BorderedContainer from "../BorderedContainer";
 import CodeBlock from "../Gaming/CodeBlock";
+import Problem from "../Gaming/Problem";
 import ScoreBar from "../Gaming/ScoreBar";
 import SubmitResult from "../Gaming/SubmitResult";
 import UserIcon from "../UserIcon";
@@ -16,6 +16,7 @@ type Props = {
 	playerProfileB: PlayerProfile;
 	problemTitle: string;
 	problemDescription: string;
+	sampleCode: string;
 	gameResult: "winA" | "winB" | "draw" | null;
 };
 
@@ -25,6 +26,7 @@ export default function GolfWatchAppGaming1v1({
 	playerProfileB,
 	problemTitle,
 	problemDescription,
+	sampleCode,
 	gameResult,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
@@ -114,16 +116,11 @@ export default function GolfWatchAppGaming1v1({
 						<SubmitResult status={statusA} />
 						<SubmitResult status={statusB} />
 					</div>
-					<div>
-						<div className="mb-2 text-center text-xl font-bold">
-							{problemTitle}
-						</div>
-						<BorderedContainer>
-							<pre className="text-gray-700 whitespace-pre-wrap break-words">
-								{problemDescription}
-							</pre>
-						</BorderedContainer>
-					</div>
+					<Problem
+						title={problemTitle}
+						description={problemDescription}
+						sampleCode={sampleCode}
+					/>
 				</div>
 				<CodeBlock code={codeB} language="php" />
 			</div>

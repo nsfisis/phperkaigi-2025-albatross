@@ -8,8 +8,7 @@ import {
 	statusAtom,
 } from "../../states/play";
 import type { PlayerProfile } from "../../types/PlayerProfile";
-import BorderedContainer from "../BorderedContainer";
-import CodeBlock from "../Gaming/CodeBlock";
+import Problem from "../Gaming/Problem";
 import SubmitResult from "../Gaming/SubmitResult";
 import UserIcon from "../UserIcon";
 
@@ -81,22 +80,11 @@ export default function GolfPlayAppGaming({
 				</Link>
 			</div>
 			<div className="grow grid grid-cols-3 divide-x divide-gray-300">
-				<div className="p-4">
-					<div className="mb-2 text-xl font-bold">{problemTitle}</div>
-					<div className="p-2 flex flex-col gap-4">
-						<BorderedContainer>
-							<pre className="text-gray-700 whitespace-pre-wrap break-words">
-								{problemDescription}
-							</pre>
-						</BorderedContainer>
-						<BorderedContainer>
-							<div>
-								<h2>サンプルコード</h2>
-								<CodeBlock code={sampleCode} language="php" />
-							</div>
-						</BorderedContainer>
-					</div>
-				</div>
+				<Problem
+					title={problemTitle}
+					description={problemDescription}
+					sampleCode={sampleCode}
+				/>
 				<div className="p-4">
 					<textarea
 						ref={textareaRef}

@@ -1,7 +1,7 @@
 import { useAtomValue } from "jotai";
 import type { components } from "../../api/schema";
 import { gamingLeftTimeSecondsAtom } from "../../states/watch";
-import BorderedContainer from "../BorderedContainer";
+import Problem from "../Gaming/Problem";
 import UserLabel from "../UserLabel";
 
 type RankingEntry = components["schemas"]["RankingEntry"];
@@ -11,6 +11,7 @@ type Props = {
 	ranking: RankingEntry[];
 	problemTitle: string;
 	problemDescription: string;
+	sampleCode: string;
 	gameResult: "winA" | "winB" | "draw" | null;
 };
 
@@ -19,6 +20,7 @@ export default function GolfWatchAppGamingMultiplayer({
 	ranking,
 	problemTitle,
 	problemDescription,
+	sampleCode,
 	gameResult,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
@@ -48,18 +50,11 @@ export default function GolfWatchAppGamingMultiplayer({
 				<div className="font-bold flex justify-between my-auto"></div>
 			</div>
 			<div className="grow grid grid-cols-2 p-4 gap-4">
-				<div className="flex flex-col gap-4">
-					<div>
-						<div className="mb-2 text-center text-xl font-bold">
-							{problemTitle}
-						</div>
-						<BorderedContainer>
-							<pre className="text-gray-700 whitespace-pre-wrap break-words">
-								{problemDescription}
-							</pre>
-						</BorderedContainer>
-					</div>
-				</div>
+				<Problem
+					title={problemTitle}
+					description={problemDescription}
+					sampleCode={sampleCode}
+				/>
 				<div>
 					<table className="min-w-full divide-y divide-gray-200">
 						<thead className="bg-gray-50">
