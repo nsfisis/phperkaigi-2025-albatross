@@ -29,7 +29,9 @@ export default function CodeBlock({ code, language }: Props) {
 
 	return (
 		<pre className="h-full w-full p-2 bg-gray-50 rounded-lg border border-gray-300 whitespace-pre-wrap break-words">
-			{highlightedCode === null ? null : (
+			{highlightedCode === null ? (
+				<code>{code}</code>
+			) : (
 				<code dangerouslySetInnerHTML={{ __html: highlightedCode }} />
 			)}
 		</pre>
