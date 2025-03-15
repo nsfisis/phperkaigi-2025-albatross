@@ -2,11 +2,14 @@ import React from "react";
 
 type Props = {
 	children: React.ReactNode;
+	className?: string;
 };
 
-export default function BorderedContainer({ children }: Props) {
+export default function BorderedContainer({ children, className }: Props) {
 	return (
-		<div className="bg-white border-2 border-blue-600 rounded-xl p-4">
+		<div
+			className={`bg-white border-2 border-blue-600 rounded-xl p-4 ${className}`}
+		>
 			{children}
 		</div>
 	);
