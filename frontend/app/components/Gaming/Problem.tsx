@@ -24,6 +24,9 @@ export default function Problem({ title, description, sampleCode }: Props) {
 				<div className="text-gray-700 flex flex-col gap-2">
 					<p>スコアはコード中の全 ASCII 空白文字を除去した後のバイト数です。</p>
 					<p>
+						同じスコアを出した場合、より提出が早かったプレイヤーの勝ちとなります。
+					</p>
+					<p>
 						この環境の PHP バージョンは{" "}
 						<strong className="font-bold">8.4.4</strong> です。 mbstring
 						を除くほとんどの拡張は無効化されています。
