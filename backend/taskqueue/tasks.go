@@ -43,7 +43,11 @@ func newTaskRunTestcase(
 	if err != nil {
 		return nil, err
 	}
-	return asynq.NewTask(string(TaskTypeRunTestcase), payload), nil
+	return asynq.NewTask(
+		string(TaskTypeRunTestcase),
+		payload,
+		asynq.MaxRetry(3),
+	), nil
 }
 
 type TaskResult interface {
