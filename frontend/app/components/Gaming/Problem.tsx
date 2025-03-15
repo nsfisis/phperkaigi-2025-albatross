@@ -1,5 +1,6 @@
 import BorderedContainerWithCaption from "../BorderedContainerWithCaption";
 import CodeBlock from "./CodeBlock";
+import InlineCode from "./InlineCode";
 
 type Props = {
 	title: string;
@@ -35,10 +36,9 @@ export default function Problem({ title, description, sampleCode }: Props) {
 						等で実行が中断された場合は失敗扱いとなります。
 					</p>
 					<p>
-						なお、<code>error_reporting</code> は{" "}
-						<code>
-							E_ALL &amp; ~E_WARNING &amp; ~E_NOTICE &amp; ~E_DEPRECATED
-						</code>{" "}
+						なお、
+						<InlineCode code="error_reporting" /> は{" "}
+						<InlineCode code="E_ALL &amp; ~E_WARNING &amp; ~E_NOTICE &amp; ~E_DEPRECATED" />{" "}
 						に設定されています。
 					</p>
 				</div>

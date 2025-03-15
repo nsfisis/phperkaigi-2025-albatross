@@ -2,7 +2,6 @@ import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Form, useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
 import { apiGetGames } from "../api/client";
-import BorderedContainer from "../components/BorderedContainer";
 import BorderedContainerWithCaption from "../components/BorderedContainerWithCaption";
 import NavigateLink from "../components/NavigateLink";
 import UserIcon from "../components/UserIcon";
