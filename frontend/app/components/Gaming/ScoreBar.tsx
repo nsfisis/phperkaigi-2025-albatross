@@ -14,7 +14,12 @@ export default function ScoreBar({ scoreA, scoreB, bgA, bgB }: Props) {
 	} else if (scoreB === null) {
 		scoreRatio = 100;
 	} else {
-		scoreRatio = (scoreB / (scoreA + scoreB)) * 100;
+		const rawRatio = scoreB / (scoreA + scoreB);
+		const k = 3.0;
+		const emphasizedRatio =
+			Math.pow(rawRatio, k) /
+			(Math.pow(rawRatio, k) + Math.pow(1 - rawRatio, k));
+		scoreRatio = emphasizedRatio * 100;
 	}
 
 	return (

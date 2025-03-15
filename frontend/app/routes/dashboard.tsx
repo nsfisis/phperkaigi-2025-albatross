@@ -41,7 +41,7 @@ export default function Dashboard() {
 					{games.length === 0 ? (
 						<p>エントリーできる試合はありません</p>
 					) : (
-						<ul className="divide-y">
+						<ul className="divide-y divide-gray-300">
 							{games.map((game) => (
 								<li
 									key={game.game_id}
