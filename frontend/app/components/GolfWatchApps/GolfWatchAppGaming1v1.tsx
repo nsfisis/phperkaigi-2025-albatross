@@ -5,6 +5,7 @@ import {
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import CodeBlock from "../Gaming/CodeBlock";
+import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
 import ScoreBar from "../Gaming/ScoreBar";
 import SubmitResult from "../Gaming/SubmitResult";
@@ -41,12 +42,6 @@ export default function GolfWatchAppGaming1v1({
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
 
-	const leftTime = (() => {
-		const m = Math.floor(leftTimeSeconds / 60);
-		const s = leftTimeSeconds % 60;
-		return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-	})();
-
 	const topBg = gameResult
 		? gameResult === "winA"
 			? "bg-orange-400"
@@ -76,15 +71,17 @@ export default function GolfWatchAppGaming1v1({
 				</div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
-					<div className="text-3xl">
-						{gameResult
-							? gameResult === "winA"
+					{gameResult ? (
+						<div className="text-3xl">
+							{gameResult === "winA"
 								? `勝者 ${playerProfileA.displayName}`
 								: gameResult === "winB"
 									? `勝者 ${playerProfileB.displayName}`
-									: "引き分け"
-							: leftTime}
-					</div>
+									: "引き分け"}
+						</div>
+					) : (
+						<LeftTime sec={leftTimeSeconds} />
+					)}
 				</div>
 				<div className="font-bold flex justify-between my-auto">
 					<div className="text-6xl">{scoreB}</div>

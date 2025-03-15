@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import type { components } from "../../api/schema";
 import { gamingLeftTimeSecondsAtom } from "../../states/watch";
+import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
 import UserLabel from "../UserLabel";
 
@@ -25,12 +26,6 @@ export default function GolfWatchAppGamingMultiplayer({
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 
-	const leftTime = (() => {
-		const m = Math.floor(leftTimeSeconds / 60);
-		const s = leftTimeSeconds % 60;
-		return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-	})();
-
 	const topBg = gameResult
 		? gameResult === "winA"
 			? "bg-orange-400"
@@ -45,7 +40,7 @@ export default function GolfWatchAppGamingMultiplayer({
 				<div className="font-bold flex justify-between my-auto"></div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
-					<div className="text-3xl">{leftTime}</div>
+					<LeftTime sec={leftTimeSeconds} />
 				</div>
 				<div className="font-bold flex justify-between my-auto"></div>
 			</div>
