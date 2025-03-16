@@ -24,18 +24,11 @@ const (
 var jst = time.FixedZone("Asia/Tokyo", 9*60*60)
 
 type Handler struct {
-	q   *db.Queries
-	hub GameHubInterface
+	q *db.Queries
 }
 
-// TODO
-type GameHubInterface any
-
-func NewHandler(q *db.Queries, hub GameHubInterface) *Handler {
-	return &Handler{
-		q:   q,
-		hub: hub,
-	}
+func NewHandler(q *db.Queries) *Handler {
+	return &Handler{q: q}
 }
 
 func newAdminMiddleware() echo.MiddlewareFunc {

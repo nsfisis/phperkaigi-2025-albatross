@@ -70,7 +70,7 @@ func main() {
 	apiHandler := api.NewHandler(queries, gameHub)
 	api.RegisterHandlers(apiGroup, api.NewStrictHandler(apiHandler, nil))
 
-	adminHandler := admin.NewHandler(queries, gameHub)
+	adminHandler := admin.NewHandler(queries)
 	adminGroup := e.Group("/phperkaigi/2025/code-battle/admin")
 	adminHandler.RegisterHandlers(adminGroup)
 
