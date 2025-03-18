@@ -68,10 +68,6 @@ export default function Login() {
 						<h2 className="text-2xl mb-6 text-center">
 							fortee アカウントでログイン
 						</h2>
-						<p className="text-sm mb-4">
-							fortee
-							のアカウントをお持ちでない場合は、イベントスタッフにお声がけください。
-						</p>
 						{loginErrors?.message && (
 							<p className="text-sky-500 text-sm mb-4">{loginErrors.message}</p>
 						)}
