@@ -22,7 +22,12 @@ export default function Problem({ title, description, sampleCode }: Props) {
 			</BorderedContainerWithCaption>
 			<BorderedContainerWithCaption caption="スコア計算・PHP 環境">
 				<div className="text-gray-700 flex flex-col gap-2">
-					<p>スコアはコード中の全 ASCII 空白文字を除去した後のバイト数です。</p>
+					<p>
+						スコアはコード中の全 ASCII
+						空白文字を除去した後のバイト数です。また、先頭や末尾に置かれた PHP
+						タグ (<InlineCode code="<?php" />、<InlineCode code="<?" />、
+						<InlineCode code="?>" />) はカウントされません。
+					</p>
 					<p>
 						同じスコアを出した場合、より提出が早かったプレイヤーの勝ちとなります。
 					</p>
