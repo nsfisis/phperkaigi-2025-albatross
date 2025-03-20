@@ -16,14 +16,13 @@ type ExecutionStatus = components["schemas"]["ExecutionStatus"];
 type LatestGameState = components["schemas"]["LatestGameState"];
 
 export const gameStateKindAtom = atom<GameStateKind>((get) => {
-	const startedAt = get(gameStartedAtAtom);
-	if (!startedAt) {
-		return "waiting";
-	}
-
 	const now = get(currentTimestampAtom);
 	if (!now) {
 		return "loading";
+	}
+	const startedAt = get(gameStartedAtAtom);
+	if (!startedAt) {
+		return "waiting";
 	}
 	const durationSeconds = get(durationSecondsAtom);
 	const finishedAt = startedAt + durationSeconds;
