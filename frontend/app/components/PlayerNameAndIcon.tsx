@@ -8,7 +8,7 @@ type Props = {
 
 export default function PlayerNameAndIcon({ label, profile }: Props) {
 	return (
-		<div className="flex flex-col gap-6 my-auto">
+		<div className="flex flex-col gap-6 my-auto items-center">
 			<div className="flex flex-col gap-2">
 				<div className="text-4xl">{label}</div>
 				<div className="text-6xl">{profile.displayName}</div>
