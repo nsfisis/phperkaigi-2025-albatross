@@ -68,14 +68,14 @@ export default function Dashboard() {
 												: " (1v1)"}
 										</span>
 									</div>
-									<span>
+									<div className="flex gap-2">
 										<NavigateLink to={`/golf/${game.game_id}/play`}>
 											対戦
 										</NavigateLink>
 										<NavigateLink to={`/golf/${game.game_id}/watch`}>
 											観戦
 										</NavigateLink>
-									</span>
+									</div>
 								</li>
 							))}
 						</ul>
