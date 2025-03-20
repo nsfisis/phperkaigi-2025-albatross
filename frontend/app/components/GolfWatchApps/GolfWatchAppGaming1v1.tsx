@@ -8,7 +8,8 @@ import type { PlayerProfile } from "../../types/PlayerProfile";
 import FoldableBorderedContainerWithCaption from "../FoldableBorderedContainerWithCaption";
 import CodeBlock from "../Gaming/CodeBlock";
 import LeftTime from "../Gaming/LeftTime";
-import ProblemColumn from "../Gaming/ProblemColumn";
+import ProblemColumnContent from "../Gaming/ProblemColumnContent";
+import RankingTable from "../Gaming/RankingTable";
 import ScoreBar from "../Gaming/ScoreBar";
 import SubmitStatusLabel from "../SubmitStatusLabel";
 import ThreeColumnLayout from "../ThreeColumnLayout";
@@ -115,11 +116,13 @@ export default function GolfWatchAppGaming1v1({
 						<CodeBlock code={codeA} language="php" />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
-				<ProblemColumn
-					title={problemTitle}
-					description={problemDescription}
-					sampleCode={sampleCode}
-				/>
+				<TitledColumn title={problemTitle}>
+					<ProblemColumnContent
+						description={problemDescription}
+						sampleCode={sampleCode}
+					/>
+					<RankingTable />
+				</TitledColumn>
 				<TitledColumn title={<SubmitStatusLabel status={statusB} />}>
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeB}`}
