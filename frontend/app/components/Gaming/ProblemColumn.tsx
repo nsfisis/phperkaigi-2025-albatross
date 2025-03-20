@@ -1,4 +1,5 @@
 import BorderedContainerWithCaption from "../BorderedContainerWithCaption";
+import TitledColumn from "../TitledColumn";
 import CodeBlock from "./CodeBlock";
 import InlineCode from "./InlineCode";
 
@@ -8,10 +9,13 @@ type Props = {
 	sampleCode: string;
 };
 
-export default function Problem({ title, description, sampleCode }: Props) {
+export default function ProblemColumn({
+	title,
+	description,
+	sampleCode,
+}: Props) {
 	return (
-		<div className="p-4 flex flex-col gap-4">
-			<div className="text-center text-xl font-bold">{title}</div>
+		<TitledColumn title={title}>
 			<BorderedContainerWithCaption caption="問題">
 				<pre className="text-gray-700 whitespace-pre-wrap break-words">
 					{description}
@@ -51,6 +55,6 @@ export default function Problem({ title, description, sampleCode }: Props) {
 					</p>
 				</div>
 			</BorderedContainerWithCaption>
-		</div>
+		</TitledColumn>
 	);
 }

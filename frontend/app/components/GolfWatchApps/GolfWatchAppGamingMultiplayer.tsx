@@ -2,8 +2,9 @@ import { useAtomValue } from "jotai";
 import type { components } from "../../api/schema";
 import { gamingLeftTimeSecondsAtom } from "../../states/watch";
 import LeftTime from "../Gaming/LeftTime";
-import Problem from "../Gaming/Problem";
+import ProblemColumn from "../Gaming/ProblemColumn";
 import RankingTable from "../Gaming/RankingTable";
+import TitledColumn from "../TitledColumn";
 import TwoColumnLayout from "../TwoColumnLayout";
 
 type RankingEntry = components["schemas"]["RankingEntry"];
@@ -27,7 +28,7 @@ export default function GolfWatchAppGamingMultiplayer({
 
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
-			<div className={`text-white bg-sky-600 grid grid-cols-3 px-4 py-2`}>
+			<div className="text-white bg-sky-600 grid grid-cols-3 px-4 py-2">
 				<div className="font-bold flex justify-between my-auto"></div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
@@ -36,15 +37,14 @@ export default function GolfWatchAppGamingMultiplayer({
 				<div className="font-bold flex justify-between my-auto"></div>
 			</div>
 			<TwoColumnLayout>
-				<Problem
+				<ProblemColumn
 					title={problemTitle}
 					description={problemDescription}
 					sampleCode={sampleCode}
 				/>
-				<div className="p-4 flex flex-col gap-4">
-					<div className="text-center text-xl font-bold">順位表</div>
+				<TitledColumn title="順位表">
 					<RankingTable ranking={ranking} />
-				</div>
+				</TitledColumn>
 			</TwoColumnLayout>
 		</div>
 	);

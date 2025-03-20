@@ -5,25 +5,17 @@ import {
 	gamingLeftTimeSecondsAtom,
 	scoreAtom,
 	statusAtom,
+	calcCodeSize,
 } from "../../states/play";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";
 import LeftTime from "../Gaming/LeftTime";
-import Problem from "../Gaming/Problem";
+import ProblemColumn from "../Gaming/ProblemColumn";
 import SubmitButton from "../SubmitButton";
 import SubmitStatusLabel from "../SubmitStatusLabel";
 import ThreeColumnLayout from "../ThreeColumnLayout";
+import TitledColumn from "../TitledColumn";
 import UserIcon from "../UserIcon";
-
-function calcCodeSize(code: string): number {
-	const trimmed = code
-		.replace(/\s+/g, "")
-		.replace(/^<\?php/, "")
-		.replace(/^<\?/, "")
-		.replace(/\?>$/, "");
-	const utf8Encoded = new TextEncoder().encode(trimmed);
-	return utf8Encoded.length;
-}
 
 type Props = {
 	gameDisplayName: string;
@@ -86,13 +78,12 @@ export default function GolfPlayAppGaming({
 				</Link>
 			</div>
 			<ThreeColumnLayout>
-				<Problem
+				<ProblemColumn
 					title={problemTitle}
 					description={problemDescription}
 					sampleCode={sampleCode}
 				/>
-				<div className="p-4 flex flex-col gap-4">
-					<div className="text-center text-xl font-bold">ソースコード</div>
+				<TitledColumn title="ソースコード">
 					<BorderedContainer className="grow flex flex-col gap-4">
 						<div className="flex flex-row gap-2 items-center">
 							<div className="grow font-semibold text-lg">
@@ -109,9 +100,8 @@ export default function GolfPlayAppGaming({
 							className="grow resize-none h-full w-full p-2 bg-gray-50 rounded-lg border border-gray-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 transition duration-300"
 						/>
 					</BorderedContainer>
-				</div>
-				<div className="p-4 flex flex-col gap-4">
-					<div className="text-center text-xl font-bold">提出結果</div>
+				</TitledColumn>
+				<TitledColumn title="提出結果">
 					<div className="overflow-hidden border-2 border-blue-600 rounded-xl">
 						<table className="min-w-full divide-y divide-gray-400 border-collapse">
 							<thead className="bg-gray-50">
@@ -139,7 +129,7 @@ export default function GolfPlayAppGaming({
 						NOTE:
 						過去の提出結果を閲覧する機能は現在実装中です。それまでは提出コードをお手元に保管しておいてください。
 					</p>
-				</div>
+				</TitledColumn>
 			</ThreeColumnLayout>
 		</div>
 	);

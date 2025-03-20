@@ -2,15 +2,18 @@ import { useAtomValue } from "jotai";
 import {
 	gamingLeftTimeSecondsAtom,
 	latestGameStatesAtom,
+	calcCodeSize,
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
+import BorderedContainer from "../BorderedContainer";
+import SubmitStatusLabel from "../SubmitStatusLabel";
+import ThreeColumnLayout from "../ThreeColumnLayout";
+import TitledColumn from "../TitledColumn";
+import UserIcon from "../UserIcon";
 import CodeBlock from "../Gaming/CodeBlock";
 import LeftTime from "../Gaming/LeftTime";
-import Problem from "../Gaming/Problem";
+import ProblemColumn from "../Gaming/ProblemColumn";
 import ScoreBar from "../Gaming/ScoreBar";
-import SubmitResult from "../Gaming/SubmitResult";
-import ThreeColumnLayout from "../ThreeColumnLayout";
-import UserIcon from "../UserIcon";
 
 type Props = {
 	gameDisplayName: string;
@@ -42,6 +45,9 @@ export default function GolfWatchAppGaming1v1({
 	const codeB = stateB?.code ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
+
+	const codeSizeA = calcCodeSize(codeA);
+	const codeSizeB = calcCodeSize(codeB);
 
 	const topBg = gameResult
 		? gameResult === "winA"
@@ -102,19 +108,27 @@ export default function GolfWatchAppGaming1v1({
 				bgB="bg-purple-400"
 			/>
 			<ThreeColumnLayout>
-				<CodeBlock code={codeA} language="php" />
-				<div className="flex flex-col gap-4">
-					<div className="grid grid-cols-2 gap-4">
-						<SubmitResult status={statusA} />
-						<SubmitResult status={statusB} />
-					</div>
-					<Problem
-						title={problemTitle}
-						description={problemDescription}
-						sampleCode={sampleCode}
-					/>
-				</div>
-				<CodeBlock code={codeB} language="php" />
+				<TitledColumn title={<SubmitStatusLabel status={statusA} />}>
+					<BorderedContainer className="grow flex flex-col gap-4">
+						<div className="text-center font-semibold text-lg">
+							コードサイズ: {codeSizeA}
+						</div>
+						<CodeBlock code={codeA} language="php" />
+					</BorderedContainer>
+				</TitledColumn>
+				<ProblemColumn
+					title={problemTitle}
+					description={problemDescription}
+					sampleCode={sampleCode}
+				/>
+				<TitledColumn title={<SubmitStatusLabel status={statusB} />}>
+					<BorderedContainer className="grow flex flex-col gap-4">
+						<div className="text-center font-semibold text-lg">
+							コードサイズ: {codeSizeB}
+						</div>
+						<CodeBlock code={codeB} language="php" />
+					</BorderedContainer>
+				</TitledColumn>
 			</ThreeColumnLayout>
 		</div>
 	);
