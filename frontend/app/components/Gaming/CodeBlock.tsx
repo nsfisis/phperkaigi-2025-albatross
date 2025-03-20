@@ -1,39 +1,21 @@
-import { useEffect, useState } from "react";
-import { codeToHtml } from "../../shiki.bundle";
+import { JSX, useLayoutEffect, useState } from "react";
+import { type BundledLanguage, highlight } from "../../highlight";
 
 type Props = {
 	code: string;
-	language: string;
+	language: BundledLanguage;
 };
 
 export default function CodeBlock({ code, language }: Props) {
-	const [highlightedCode, setHighlightedCode] = useState<string | null>(null);
+	const [nodes, setNodes] = useState<JSX.Element | null>(null);
 
-	useEffect(() => {
-		let isMounted = true;
-
-		(async () => {
-			const highlighted = await codeToHtml(code, {
-				lang: language,
-				theme: "github-light",
-			});
-			if (isMounted) {
-				setHighlightedCode(highlighted);
-			}
-		})();
-
-		return () => {
-			isMounted = false;
-		};
+	useLayoutEffect(() => {
+		highlight(code, language).then(setNodes);
 	}, [code, language]);
 
 	return (
 		<pre className="h-full w-full p-2 bg-gray-50 rounded-lg border border-gray-300 whitespace-pre-wrap break-words">
-			{highlightedCode === null ? (
-				<code>{code}</code>
-			) : (
-				<code dangerouslySetInnerHTML={{ __html: highlightedCode }} />
-			)}
+			{nodes === null ? <code>{code}</code> : nodes}
 		</pre>
 	);
 }
