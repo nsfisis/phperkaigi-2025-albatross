@@ -3,11 +3,7 @@ import { useMemo } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
-import {
-	ApiAuthTokenContext,
-	apiGetGame,
-	apiGetGamePlayLatestState,
-} from "../api/client";
+import { ApiClientContext, createApiClient } from "../api/client";
 import GolfPlayApp from "../components/GolfPlayApp";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
@@ -20,29 +16,25 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { token, user } = await ensureUserLoggedIn(request);
+	const apiClient = createApiClient(token);
 
 	const gameId = Number(params.gameId);
 
-	const fetchGame = async () => {
-		return (await apiGetGame(token, gameId)).game;
-	};
-	const fetchGameState = async () => {
-		return (await apiGetGamePlayLatestState(token, gameId)).state;
-	};
-
-	const [game, state] = await Promise.all([fetchGame(), fetchGameState()]);
+	const [{ game }, { state: gameState }] = await Promise.all([
+		apiClient.getGame(gameId),
+		apiClient.getGamePlayLatestState(gameId),
+	]);
 
 	return {
-		apiAuthToken: token,
+		apiToken: token,
 		game,
 		player: user,
-		gameState: state,
+		gameState,
 	};
 }
 
 export default function GolfPlay() {
-	const { apiAuthToken, game, player, gameState } =
-		useLoaderData<typeof loader>();
+	const { apiToken, game, player, gameState } = useLoaderData<typeof loader>();
 
 	const store = useMemo(() => {
 		void game.game_id;
@@ -52,14 +44,14 @@ export default function GolfPlay() {
 
 	return (
 		<JotaiProvider store={store}>
-			<ApiAuthTokenContext.Provider value={apiAuthToken}>
+			<ApiClientContext.Provider value={createApiClient(apiToken)}>
 				<GolfPlayApp
 					key={game.game_id}
 					game={game}
 					player={player}
 					initialGameState={gameState}
 				/>
-			</ApiAuthTokenContext.Provider>
+			</ApiClientContext.Provider>
 		</JotaiProvider>
 	);
 }

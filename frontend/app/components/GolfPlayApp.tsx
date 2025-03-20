@@ -3,13 +3,7 @@ import { useHydrateAtoms } from "jotai/utils";
 import { useContext, useEffect, useState } from "react";
 import { useTimer } from "react-use-precision-timer";
 import { useDebouncedCallback } from "use-debounce";
-import {
-	ApiAuthTokenContext,
-	apiGetGame,
-	apiGetGamePlayLatestState,
-	apiPostGamePlayCode,
-	apiPostGamePlaySubmit,
-} from "../api/client";
+import { ApiClientContext } from "../api/client";
 import type { components } from "../api/schema";
 import {
 	gameStateKindAtom,
@@ -43,7 +37,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 		[setLatestGameStateAtom, initialGameState],
 	]);
 
-	const apiAuthToken = useContext(ApiAuthTokenContext);
+	const apiClient = useContext(ApiClientContext)!;
 
 	const gameStateKind = useAtomValue(gameStateKindAtom);
 	const setGameStartedAt = useSetAtom(setGameStartedAtAtom);
@@ -63,7 +57,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 	const onCodeChange = useDebouncedCallback(async (code: string) => {
 		console.log("player:c2s:code");
 		if (game.game_type === "1v1") {
-			await apiPostGamePlayCode(apiAuthToken, game.game_id, code);
+			await apiClient.postGamePlayCode(game.game_id, code);
 		}
 	}, 1000);
 
@@ -73,7 +67,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 		}
 		console.log("player:c2s:submit");
 		handleSubmitCodePre();
-		await apiPostGamePlaySubmit(apiAuthToken, game.game_id, code);
+		await apiClient.postGamePlaySubmit(game.game_id, code);
 		handleSubmitCodePost();
 	}, 1000);
 
@@ -91,13 +85,12 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 
 			try {
 				if (gameStateKind === "waiting") {
-					const { game: g } = await apiGetGame(apiAuthToken, game.game_id);
+					const { game: g } = await apiClient.getGame(game.game_id);
 					if (g.started_at != null) {
 						setGameStartedAt(g.started_at);
 					}
 				} else if (gameStateKind === "gaming") {
-					const { state } = await apiGetGamePlayLatestState(
-						apiAuthToken,
+					const { state } = await apiClient.getGamePlayLatestState(
 						game.game_id,
 					);
 					setLatestGameState(state);
@@ -114,7 +107,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 		};
 	}, [
 		isDataPolling,
-		apiAuthToken,
+		apiClient,
 		game.game_id,
 		gameStateKind,
 		setGameStartedAt,

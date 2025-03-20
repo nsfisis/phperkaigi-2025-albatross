@@ -2,12 +2,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { useContext, useEffect, useState } from "react";
 import { useTimer } from "react-use-precision-timer";
-import {
-	ApiAuthTokenContext,
-	apiGetGame,
-	apiGetGameWatchLatestStates,
-	apiGetGameWatchRanking,
-} from "../api/client";
+import { ApiClientContext } from "../api/client";
 import type { components } from "../api/schema";
 import {
 	gameStateKindAtom,
@@ -46,7 +41,7 @@ export default function GolfWatchApp({
 		[setLatestGameStatesAtom, initialGameStates],
 	]);
 
-	const apiAuthToken = useContext(ApiAuthTokenContext);
+	const apiClient = useContext(ApiClientContext)!;
 
 	const gameStateKind = useAtomValue(gameStateKindAtom);
 	const setGameStartedAt = useSetAtom(setGameStartedAtAtom);
@@ -88,20 +83,16 @@ export default function GolfWatchApp({
 
 			try {
 				if (gameStateKind === "waiting") {
-					const { game: g } = await apiGetGame(apiAuthToken, game.game_id);
+					const { game: g } = await apiClient.getGame(game.game_id);
 					if (g.started_at != null) {
 						setGameStartedAt(g.started_at);
 					}
 				} else if (gameStateKind === "gaming") {
-					const { states } = await apiGetGameWatchLatestStates(
-						apiAuthToken,
+					const { states } = await apiClient.getGameWatchLatestStates(
 						game.game_id,
 					);
 					setLatestGameStates(states);
-					const { ranking } = await apiGetGameWatchRanking(
-						apiAuthToken,
-						game.game_id,
-					);
+					const { ranking } = await apiClient.getGameWatchRanking(game.game_id);
 					setRanking(ranking);
 				}
 			} catch (error) {
@@ -116,7 +107,7 @@ export default function GolfWatchApp({
 		};
 	}, [
 		isDataPolling,
-		apiAuthToken,
+		apiClient,
 		game.game_id,
 		gameStateKind,
 		setGameStartedAt,

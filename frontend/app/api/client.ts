@@ -2,15 +2,15 @@ import createClient from "openapi-fetch";
 import { createContext } from "react";
 import type { paths } from "./schema";
 
-const apiClient = createClient<paths>({
+const client = createClient<paths>({
 	baseUrl:
 		process.env.NODE_ENV === "development"
 			? "http://localhost:8003/phperkaigi/2025/code-battle/api/"
 			: "https://t.nil.ninja/phperkaigi/2025/code-battle/api/",
 });
 
-export async function apiPostLogin(username: string, password: string) {
-	const { data, error } = await apiClient.POST("/login", {
+export async function apiLogin(username: string, password: string) {
+	const { data, error } = await client.POST("/login", {
 		body: {
 			username,
 			password,
@@ -20,101 +20,101 @@ export async function apiPostLogin(username: string, password: string) {
 	return data;
 }
 
-export async function apiGetGames(token: string) {
-	const { data, error } = await apiClient.GET("/games", {
-		params: {
-			header: { Authorization: `Bearer ${token}` },
-		},
-	});
-	if (error) throw new Error(error.message);
-	return data;
-}
+class AuthenticatedApiClient {
+	constructor(public readonly token: string) {}
 
-export async function apiGetGame(token: string, gameId: number) {
-	const { data, error } = await apiClient.GET("/games/{game_id}", {
-		params: {
-			header: { Authorization: `Bearer ${token}` },
-			path: { game_id: gameId },
-		},
-	});
-	if (error) throw new Error(error.message);
-	return data;
-}
-
-export async function apiGetGamePlayLatestState(token: string, gameId: number) {
-	const { data, error } = await apiClient.GET(
-		"/games/{game_id}/play/latest_state",
-		{
+	async getGames() {
+		const { data, error } = await client.GET("/games", {
 			params: {
-				header: { Authorization: `Bearer ${token}` },
+				header: this._getAuthorizationHeader(),
+			},
+		});
+		if (error) throw new Error(error.message);
+		return data;
+	}
+
+	async getGame(gameId: number) {
+		const { data, error } = await client.GET("/games/{game_id}", {
+			params: {
+				header: this._getAuthorizationHeader(),
 				path: { game_id: gameId },
 			},
-		},
-	);
-	if (error) throw new Error(error.message);
-	return data;
-}
+		});
+		if (error) throw new Error(error.message);
+		return data;
+	}
 
-export async function apiPostGamePlayCode(
-	token: string,
-	gameId: number,
-	code: string,
-) {
-	const { error } = await apiClient.POST("/games/{game_id}/play/code", {
-		params: {
-			header: { Authorization: `Bearer ${token}` },
-			path: { game_id: gameId },
-		},
-		body: { code },
-	});
-	if (error) throw new Error(error.message);
-}
+	async getGamePlayLatestState(gameId: number) {
+		const { data, error } = await client.GET(
+			"/games/{game_id}/play/latest_state",
+			{
+				params: {
+					header: this._getAuthorizationHeader(),
+					path: { game_id: gameId },
+				},
+			},
+		);
+		if (error) throw new Error(error.message);
+		return data;
+	}
 
-export async function apiPostGamePlaySubmit(
-	token: string,
-	gameId: number,
-	code: string,
-) {
-	const { data, error } = await apiClient.POST("/games/{game_id}/play/submit", {
-		params: {
-			header: { Authorization: `Bearer ${token}` },
-			path: { game_id: gameId },
-		},
-		body: { code },
-	});
-	if (error) throw new Error(error.message);
-	return data;
-}
-
-export async function apiGetGameWatchRanking(token: string, gameId: number) {
-	const { data, error } = await apiClient.GET(
-		"/games/{game_id}/watch/ranking",
-		{
+	async postGamePlayCode(gameId: number, code: string) {
+		const { error } = await client.POST("/games/{game_id}/play/code", {
 			params: {
-				header: { Authorization: `Bearer ${token}` },
+				header: this._getAuthorizationHeader(),
 				path: { game_id: gameId },
 			},
-		},
-	);
-	if (error) throw new Error(error.message);
-	return data;
-}
+			body: { code },
+		});
+		if (error) throw new Error(error.message);
+	}
 
-export async function apiGetGameWatchLatestStates(
-	token: string,
-	gameId: number,
-) {
-	const { data, error } = await apiClient.GET(
-		"/games/{game_id}/watch/latest_states",
-		{
+	async postGamePlaySubmit(gameId: number, code: string) {
+		const { data, error } = await client.POST("/games/{game_id}/play/submit", {
 			params: {
-				header: { Authorization: `Bearer ${token}` },
+				header: this._getAuthorizationHeader(),
 				path: { game_id: gameId },
 			},
-		},
-	);
-	if (error) throw new Error(error.message);
-	return data;
+			body: { code },
+		});
+		if (error) throw new Error(error.message);
+		return data;
+	}
+
+	async getGameWatchRanking(gameId: number) {
+		const { data, error } = await client.GET("/games/{game_id}/watch/ranking", {
+			params: {
+				header: this._getAuthorizationHeader(),
+				path: { game_id: gameId },
+			},
+		});
+		if (error) throw new Error(error.message);
+		return data;
+	}
+
+	async getGameWatchLatestStates(gameId: number) {
+		const { data, error } = await client.GET(
+			"/games/{game_id}/watch/latest_states",
+			{
+				params: {
+					header: this._getAuthorizationHeader(),
+					path: { game_id: gameId },
+				},
+			},
+		);
+		if (error) throw new Error(error.message);
+		return data;
+	}
+
+	_getAuthorizationHeader() {
+		return { Authorization: `Bearer ${this.token}` };
+	}
 }
 
-export const ApiAuthTokenContext = createContext<string>("");
+export function createApiClient(token: string) {
+	return new AuthenticatedApiClient(token);
+}
+
+export const ApiClientContext = createContext<AuthenticatedApiClient | null>(
+	null,
+);

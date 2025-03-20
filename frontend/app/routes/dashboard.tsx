@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Form, useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
-import { apiGetGames } from "../api/client";
+import { createApiClient } from "../api/client";
 import BorderedContainerWithCaption from "../components/BorderedContainerWithCaption";
 import NavigateLink from "../components/NavigateLink";
 import UserIcon from "../components/UserIcon";
@@ -12,7 +12,9 @@ export const meta: MetaFunction = () => [
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { user, token } = await ensureUserLoggedIn(request);
-	const { games } = await apiGetGames(token);
+	const apiClient = createApiClient(token);
+
+	const { games } = await apiClient.getGames();
 	return {
 		user,
 		games,

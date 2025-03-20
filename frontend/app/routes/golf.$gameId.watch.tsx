@@ -3,12 +3,7 @@ import { useMemo } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
-import {
-	ApiAuthTokenContext,
-	apiGetGame,
-	apiGetGameWatchLatestStates,
-	apiGetGameWatchRanking,
-} from "../api/client";
+import { ApiClientContext, createApiClient } from "../api/client";
 import GolfWatchApp from "../components/GolfWatchApp";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
@@ -21,27 +16,18 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => [
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
 	const { token } = await ensureUserLoggedIn(request);
+	const apiClient = createApiClient(token);
 
 	const gameId = Number(params.gameId);
 
-	const fetchGame = async () => {
-		return (await apiGetGame(token, gameId)).game;
-	};
-	const fetchRanking = async () => {
-		return (await apiGetGameWatchRanking(token, gameId)).ranking;
-	};
-	const fetchGameStates = async () => {
-		return (await apiGetGameWatchLatestStates(token, gameId)).states;
-	};
-
-	const [game, ranking, gameStates] = await Promise.all([
-		fetchGame(),
-		fetchRanking(),
-		fetchGameStates(),
+	const [{ game }, { ranking }, { states: gameStates }] = await Promise.all([
+		await apiClient.getGame(gameId),
+		await apiClient.getGameWatchRanking(gameId),
+		await apiClient.getGameWatchLatestStates(gameId),
 	]);
 
 	return {
-		apiAuthToken: token,
+		apiToken: token,
 		game,
 		ranking,
 		gameStates,
@@ -49,7 +35,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 }
 
 export default function GolfWatch() {
-	const { apiAuthToken, game, ranking, gameStates } =
+	const { apiToken, game, ranking, gameStates } =
 		useLoaderData<typeof loader>();
 
 	const store = useMemo(() => {
@@ -59,14 +45,14 @@ export default function GolfWatch() {
 
 	return (
 		<JotaiProvider store={store}>
-			<ApiAuthTokenContext.Provider value={apiAuthToken}>
+			<ApiClientContext.Provider value={createApiClient(apiToken)}>
 				<GolfWatchApp
 					key={game.game_id}
 					game={game}
 					initialGameStates={gameStates}
 					initialRanking={ranking}
 				/>
-			</ApiAuthTokenContext.Provider>
+			</ApiClientContext.Provider>
 		</JotaiProvider>
 	);
 }

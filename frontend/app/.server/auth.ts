@@ -2,7 +2,7 @@ import { jwtDecode } from "jwt-decode";
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { apiPostLogin } from "../api/client";
+import { apiLogin } from "../api/client";
 import { components } from "../api/schema";
 import { createUnstructuredCookie } from "./cookie";
 import { cookieOptions, sessionStorage } from "./session";
@@ -13,7 +13,7 @@ authenticator.use(
 	new FormStrategy(async ({ form }) => {
 		const username = String(form.get("username"));
 		const password = String(form.get("password"));
-		return (await apiPostLogin(username, password)).token;
+		return (await apiLogin(username, password)).token;
 	}),
 	"default",
 );
