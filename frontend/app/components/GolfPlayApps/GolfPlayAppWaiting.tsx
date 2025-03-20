@@ -16,7 +16,7 @@ export default function GolfPlayAppWaiting({
 				<div className="text-4xl">{gameDisplayName}</div>
 			</div>
 			<div className="grow grid mx-auto text-black">
-				<PlayerNameAndIcon label="You" profile={playerProfile} />
+				<PlayerNameAndIcon profile={playerProfile} />
 			</div>
 		</div>
 	);

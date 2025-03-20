@@ -55,7 +55,7 @@ export default function GolfWatchAppGaming1v1({
 		<div className="min-h-screen bg-gray-100 flex flex-col">
 			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
 				<div className="font-bold flex justify-between my-auto">
-					<div className="flex gap-6">
+					<div className="flex gap-6 items-center">
 						{playerProfileA.iconPath && (
 							<UserIcon
 								iconPath={playerProfileA.iconPath}
@@ -63,10 +63,7 @@ export default function GolfWatchAppGaming1v1({
 								className="w-12 h-12 my-auto"
 							/>
 						)}
-						<div>
-							<div className="text-gray-100">Player 1</div>
-							<div className="text-2xl">{playerProfileA.displayName}</div>
-						</div>
+						<div className="text-4xl">{playerProfileA.displayName}</div>
 					</div>
 					<div className="text-6xl">{scoreA}</div>
 				</div>
@@ -86,11 +83,8 @@ export default function GolfWatchAppGaming1v1({
 				</div>
 				<div className="font-bold flex justify-between my-auto">
 					<div className="text-6xl">{scoreB}</div>
-					<div className="flex gap-6 text-end">
-						<div>
-							<div className="text-gray-100">Player 2</div>
-							<div className="text-2xl">{playerProfileB.displayName}</div>
-						</div>
+					<div className="flex gap-6 items-center text-end">
+						<div className="text-4xl">{playerProfileB.displayName}</div>
 						{playerProfileB.iconPath && (
 							<UserIcon
 								iconPath={playerProfileB.iconPath}

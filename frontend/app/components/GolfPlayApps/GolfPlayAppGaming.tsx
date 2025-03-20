@@ -72,12 +72,9 @@ export default function GolfPlayAppGaming({
 					<LeftTime sec={leftTimeSeconds} />
 				</div>
 				<Link to={"/dashboard"}>
-					<div className="flex gap-4 my-auto font-bold">
+					<div className="flex gap-6 items-center font-bold">
 						<div className="text-6xl">{score}</div>
-						<div className="text-end">
-							<div className="text-gray-100">Player 1</div>
-							<div className="text-2xl">{playerProfile.displayName}</div>
-						</div>
+						<div className="text-4xl">{playerProfile.displayName}</div>
 						{playerProfile.iconPath && (
 							<UserIcon
 								iconPath={playerProfile.iconPath}

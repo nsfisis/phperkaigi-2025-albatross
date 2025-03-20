@@ -18,9 +18,9 @@ export default function GolfWatchAppWaiting1v1({
 				<div className="text-4xl">{gameDisplayName}</div>
 			</div>
 			<div className="grow grid grid-cols-3 gap-10 mx-auto text-black">
-				<PlayerNameAndIcon label="Player 1" profile={playerProfileA} />
+				<PlayerNameAndIcon profile={playerProfileA} />
 				<div className="text-8xl my-auto">vs.</div>
-				<PlayerNameAndIcon label="Player 2" profile={playerProfileB} />
+				<PlayerNameAndIcon profile={playerProfileB} />
 			</div>
 		</div>
 	);
