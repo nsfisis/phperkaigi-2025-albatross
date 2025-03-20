@@ -1,4 +1,5 @@
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
 import { useContext, useEffect, useState } from "react";
 import { useTimer } from "react-use-precision-timer";
 import {
@@ -12,6 +13,7 @@ import {
 	gameStateKindAtom,
 	rankingAtom,
 	setCurrentTimestampAtom,
+	setDurationSecondsAtom,
 	setGameStartedAtAtom,
 	setLatestGameStatesAtom,
 } from "../states/watch";
@@ -23,19 +25,34 @@ import GolfWatchAppWaiting1v1 from "./GolfWatchApps/GolfWatchAppWaiting1v1";
 import GolfWatchAppWaitingMultiplayer from "./GolfWatchApps/GolfWatchAppWaitingMultiplayer";
 
 type Game = components["schemas"]["Game"];
+type LatestGameState = components["schemas"]["LatestGameState"];
+type RankingEntry = components["schemas"]["RankingEntry"];
 
 export type Props = {
 	game: Game;
+	initialGameStates: { [key: string]: LatestGameState };
+	initialRanking: RankingEntry[];
 };
 
-export default function GolfWatchApp({ game }: Props) {
+export default function GolfWatchApp({
+	game,
+	initialGameStates,
+	initialRanking,
+}: Props) {
+	useHydrateAtoms([
+		[rankingAtom, initialRanking],
+		[setDurationSecondsAtom, game.duration_seconds],
+		[setGameStartedAtAtom, game.started_at ?? null],
+		[setLatestGameStatesAtom, initialGameStates],
+	]);
+
 	const apiAuthToken = useContext(ApiAuthTokenContext);
 
 	const gameStateKind = useAtomValue(gameStateKindAtom);
 	const setGameStartedAt = useSetAtom(setGameStartedAtAtom);
 	const setCurrentTimestamp = useSetAtom(setCurrentTimestampAtom);
 	const setLatestGameStates = useSetAtom(setLatestGameStatesAtom);
-	const [ranking, setRanking] = useAtom(rankingAtom);
+	const setRanking = useSetAtom(rankingAtom);
 
 	useTimer({ delay: 1000, startImmediately: true }, setCurrentTimestamp);
 
@@ -135,7 +152,6 @@ export default function GolfWatchApp({ game }: Props) {
 		) : (
 			<GolfWatchAppGamingMultiplayer
 				gameDisplayName={game.display_name}
-				ranking={ranking}
 				problemTitle={game.problem.title}
 				problemDescription={game.problem.description}
 				sampleCode={game.problem.sample_code}

@@ -1,4 +1,5 @@
 import { useAtomValue, useSetAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
 import { useContext, useEffect, useState } from "react";
 import { useTimer } from "react-use-precision-timer";
 import { useDebouncedCallback } from "use-debounce";
@@ -15,6 +16,7 @@ import {
 	handleSubmitCodePostAtom,
 	handleSubmitCodePreAtom,
 	setCurrentTimestampAtom,
+	setDurationSecondsAtom,
 	setGameStartedAtAtom,
 	setLatestGameStateAtom,
 } from "../states/play";
@@ -26,14 +28,21 @@ import GolfPlayAppWaiting from "./GolfPlayApps/GolfPlayAppWaiting";
 
 type Game = components["schemas"]["Game"];
 type User = components["schemas"]["User"];
+type LatestGameState = components["schemas"]["LatestGameState"];
 
 type Props = {
 	game: Game;
 	player: User;
-	initialCode: string;
+	initialGameState: LatestGameState;
 };
 
-export default function GolfPlayApp({ game, player, initialCode }: Props) {
+export default function GolfPlayApp({ game, player, initialGameState }: Props) {
+	useHydrateAtoms([
+		[setDurationSecondsAtom, game.duration_seconds],
+		[setGameStartedAtAtom, game.started_at ?? null],
+		[setLatestGameStateAtom, initialGameState],
+	]);
+
 	const apiAuthToken = useContext(ApiAuthTokenContext);
 
 	const gameStateKind = useAtomValue(gameStateKindAtom);
@@ -131,7 +140,7 @@ export default function GolfPlayApp({ game, player, initialCode }: Props) {
 				problemTitle={game.problem.title}
 				problemDescription={game.problem.description}
 				sampleCode={game.problem.sample_code}
-				initialCode={initialCode}
+				initialCode={initialGameState.code}
 				onCodeChange={onCodeChange}
 				onCodeSubmit={onCodeSubmit}
 			/>

@@ -2,10 +2,10 @@ import { useAtomValue } from "jotai";
 import React, { useRef, useState } from "react";
 import { Link } from "react-router";
 import {
+	calcCodeSize,
 	gamingLeftTimeSecondsAtom,
 	scoreAtom,
 	statusAtom,
-	calcCodeSize,
 } from "../../states/play";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";

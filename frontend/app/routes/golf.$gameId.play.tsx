@@ -1,4 +1,5 @@
-import { useHydrateAtoms } from "jotai/utils";
+import { Provider as JotaiProvider, createStore } from "jotai";
+import { useMemo } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
@@ -8,11 +9,6 @@ import {
 	apiGetGamePlayLatestState,
 } from "../api/client";
 import GolfPlayApp from "../components/GolfPlayApp";
-import {
-	setDurationSecondsAtom,
-	setGameStartedAtAtom,
-	setLatestGameStateAtom,
-} from "../states/play";
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => [
 	{
@@ -48,15 +44,22 @@ export default function GolfPlay() {
 	const { apiAuthToken, game, player, gameState } =
 		useLoaderData<typeof loader>();
 
-	useHydrateAtoms([
-		[setDurationSecondsAtom, game.duration_seconds],
-		[setGameStartedAtAtom, game.started_at ?? null],
-		[setLatestGameStateAtom, gameState],
-	]);
+	const store = useMemo(() => {
+		void game.game_id;
+		void player.user_id;
+		return createStore();
+	}, [game.game_id, player.user_id]);
 
 	return (
-		<ApiAuthTokenContext.Provider value={apiAuthToken}>
-			<GolfPlayApp game={game} player={player} initialCode={gameState.code} />
-		</ApiAuthTokenContext.Provider>
+		<JotaiProvider store={store}>
+			<ApiAuthTokenContext.Provider value={apiAuthToken}>
+				<GolfPlayApp
+					key={game.game_id}
+					game={game}
+					player={player}
+					initialGameState={gameState}
+				/>
+			</ApiAuthTokenContext.Provider>
+		</JotaiProvider>
 	);
 }

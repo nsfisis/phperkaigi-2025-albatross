@@ -1,19 +1,19 @@
 import { useAtomValue } from "jotai";
 import {
+	calcCodeSize,
 	gamingLeftTimeSecondsAtom,
 	latestGameStatesAtom,
-	calcCodeSize,
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";
-import SubmitStatusLabel from "../SubmitStatusLabel";
-import ThreeColumnLayout from "../ThreeColumnLayout";
-import TitledColumn from "../TitledColumn";
-import UserIcon from "../UserIcon";
 import CodeBlock from "../Gaming/CodeBlock";
 import LeftTime from "../Gaming/LeftTime";
 import ProblemColumn from "../Gaming/ProblemColumn";
 import ScoreBar from "../Gaming/ScoreBar";
+import SubmitStatusLabel from "../SubmitStatusLabel";
+import ThreeColumnLayout from "../ThreeColumnLayout";
+import TitledColumn from "../TitledColumn";
+import UserIcon from "../UserIcon";
 
 type Props = {
 	gameDisplayName: string;

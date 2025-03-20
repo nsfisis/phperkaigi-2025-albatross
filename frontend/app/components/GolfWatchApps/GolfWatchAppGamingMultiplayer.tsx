@@ -1,5 +1,4 @@
 import { useAtomValue } from "jotai";
-import type { components } from "../../api/schema";
 import { gamingLeftTimeSecondsAtom } from "../../states/watch";
 import LeftTime from "../Gaming/LeftTime";
 import ProblemColumn from "../Gaming/ProblemColumn";
@@ -7,11 +6,8 @@ import RankingTable from "../Gaming/RankingTable";
 import TitledColumn from "../TitledColumn";
 import TwoColumnLayout from "../TwoColumnLayout";
 
-type RankingEntry = components["schemas"]["RankingEntry"];
-
 type Props = {
 	gameDisplayName: string;
-	ranking: RankingEntry[];
 	problemTitle: string;
 	problemDescription: string;
 	sampleCode: string;
@@ -19,7 +15,6 @@ type Props = {
 
 export default function GolfWatchAppGamingMultiplayer({
 	gameDisplayName,
-	ranking,
 	problemTitle,
 	problemDescription,
 	sampleCode,
@@ -43,7 +38,7 @@ export default function GolfWatchAppGamingMultiplayer({
 					sampleCode={sampleCode}
 				/>
 				<TitledColumn title="順位表">
-					<RankingTable ranking={ranking} />
+					<RankingTable />
 				</TitledColumn>
 			</TwoColumnLayout>
 		</div>
