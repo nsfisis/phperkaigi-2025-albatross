@@ -274,7 +274,10 @@ func (q *Queries) GetLatestStatesOfMainPlayers(ctx context.Context, gameID int32
 }
 
 const getRanking = `-- name: GetRanking :many
-SELECT game_states.game_id, game_states.user_id, game_states.code, game_states.status, best_score_submission_id, users.user_id, username, display_name, icon_path, is_admin, label, users.created_at, submission_id, submissions.game_id, submissions.user_id, submissions.code, code_size, submissions.status, submissions.created_at FROM game_states
+SELECT
+    submissions.submission_id, submissions.game_id, submissions.user_id, submissions.code, submissions.code_size, submissions.status, submissions.created_at,
+    users.user_id, users.username, users.display_name, users.icon_path, users.is_admin, users.label, users.created_at
+FROM game_states
 JOIN users ON game_states.user_id = users.user_id
 JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
 WHERE game_states.game_id = $1
@@ -282,25 +285,8 @@ ORDER BY submissions.code_size ASC, submissions.created_at ASC
 `
 
 type GetRankingRow struct {
-	GameID                int32
-	UserID                int32
-	Code                  string
-	Status                string
-	BestScoreSubmissionID *int32
-	UserID_2              int32
-	Username              string
-	DisplayName           string
-	IconPath              *string
-	IsAdmin               bool
-	Label                 *string
-	CreatedAt             pgtype.Timestamp
-	SubmissionID          int32
-	GameID_2              int32
-	UserID_3              int32
-	Code_2                string
-	CodeSize              int32
-	Status_2              string
-	CreatedAt_2           pgtype.Timestamp
+	Submission Submission
+	User       User
 }
 
 func (q *Queries) GetRanking(ctx context.Context, gameID int32) ([]GetRankingRow, error) {
@@ -313,25 +299,20 @@ func (q *Queries) GetRanking(ctx context.Context, gameID int32) ([]GetRankingRow
 	for rows.Next() {
 		var i GetRankingRow
 		if err := rows.Scan(
-			&i.GameID,
-			&i.UserID,
-			&i.Code,
-			&i.Status,
-			&i.BestScoreSubmissionID,
-			&i.UserID_2,
-			&i.Username,
-			&i.DisplayName,
-			&i.IconPath,
-			&i.IsAdmin,
-			&i.Label,
-			&i.CreatedAt,
-			&i.SubmissionID,
-			&i.GameID_2,
-			&i.UserID_3,
-			&i.Code_2,
-			&i.CodeSize,
-			&i.Status_2,
-			&i.CreatedAt_2,
+			&i.Submission.SubmissionID,
+			&i.Submission.GameID,
+			&i.Submission.UserID,
+			&i.Submission.Code,
+			&i.Submission.CodeSize,
+			&i.Submission.Status,
+			&i.Submission.CreatedAt,
+			&i.User.UserID,
+			&i.User.Username,
+			&i.User.DisplayName,
+			&i.User.IconPath,
+			&i.User.IsAdmin,
+			&i.User.Label,
+			&i.User.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

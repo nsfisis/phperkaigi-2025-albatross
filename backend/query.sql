@@ -123,7 +123,10 @@ LEFT JOIN submissions ON game_states.best_score_submission_id = submissions.subm
 WHERE game_main_players.game_id = $1;
 
 -- name: GetRanking :many
-SELECT * FROM game_states
+SELECT
+    sqlc.embed(submissions),
+    sqlc.embed(users)
+FROM game_states
 JOIN users ON game_states.user_id = users.user_id
 JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
 WHERE game_states.game_id = $1

@@ -207,6 +207,8 @@ export interface components {
             player: components["schemas"]["User"];
             /** @example 100 */
             score: number;
+            /** @example 946684800 */
+            submitted_at: number;
         };
     };
     responses: {

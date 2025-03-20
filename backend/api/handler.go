@@ -252,14 +252,15 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 	for i, row := range rows {
 		ranking[i] = RankingEntry{
 			Player: User{
-				UserID:      int(row.UserID),
-				Username:    row.Username,
-				DisplayName: row.DisplayName,
-				IconPath:    row.IconPath,
-				IsAdmin:     row.IsAdmin,
-				Label:       toNullable(row.Label),
+				UserID:      int(row.User.UserID),
+				Username:    row.User.Username,
+				DisplayName: row.User.DisplayName,
+				IconPath:    row.User.IconPath,
+				IsAdmin:     row.User.IsAdmin,
+				Label:       toNullable(row.User.Label),
 			},
-			Score: int(row.CodeSize),
+			Score:       int(row.Submission.CodeSize),
+			SubmittedAt: row.Submission.CreatedAt.Time.Unix(),
 		}
 	}
 	return GetGameWatchRanking200JSONResponse{

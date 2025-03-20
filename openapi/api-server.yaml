@@ -392,6 +392,11 @@ components:
         score:
           type: integer
           example: 100
+        submitted_at:
+          type: integer
+          example: 946684800
+          x-go-type: int64
       required:
         - player
         - score
+        - submitted_at
