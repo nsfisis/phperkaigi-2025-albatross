@@ -63,6 +63,7 @@ func (h *Handler) RegisterHandlers(g *echo.Group) {
 	g.GET("/games/:gameID", h.getGameEdit)
 	g.POST("/games/:gameID", h.postGameEdit)
 	g.POST("/games/:gameID/start", h.postGameStart)
+	g.GET("/online-qualifying-ranking", h.getOnlineQualifyingRanking)
 }
 
 func (h *Handler) getDashboard(c echo.Context) error {
@@ -387,4 +388,41 @@ func (h *Handler) postGameStart(c echo.Context) error {
 	}
 
 	return c.Redirect(http.StatusSeeOther, basePath+"/admin/games")
+}
+
+func (h *Handler) getOnlineQualifyingRanking(c echo.Context) error {
+	game1, err := strconv.Atoi(c.QueryParam("game_1"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game_1")
+	}
+	game2, err := strconv.Atoi(c.QueryParam("game_2"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game_2")
+	}
+
+	rows, err := h.q.GetQualifyingRanking(c.Request().Context(), db.GetQualifyingRankingParams{
+		GameID:   int32(game1),
+		GameID_2: int32(game2),
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	entries := make([]echo.Map, len(rows))
+	for i, r := range rows {
+		entries[i] = echo.Map{
+			"Rank":         i + 1,
+			"Username":     r.Username,
+			"Score1":       r.CodeSize1,
+			"Score2":       r.CodeSize2,
+			"TotalScore":   r.TotalCodeSize,
+			"SubmittedAt1": r.SubmittedAt1.Time.In(jst).Format("2006-01-02T15:04"),
+			"SubmittedAt2": r.SubmittedAt2.Time.In(jst).Format("2006-01-02T15:04"),
+		}
+	}
+	return c.Render(http.StatusOK, "online_qualifying_ranking", echo.Map{
+		"BasePath": basePath,
+		"Title":    "Online Qualifying Ranking",
+		"Entries":  entries,
+	})
 }

@@ -273,6 +273,64 @@ func (q *Queries) GetLatestStatesOfMainPlayers(ctx context.Context, gameID int32
 	return items, nil
 }
 
+const getQualifyingRanking = `-- name: GetQualifyingRanking :many
+SELECT
+    u.username AS username,
+    s1.code_size AS code_size_1,
+    s2.code_size AS code_size_2,
+    (s1.code_size + s2.code_size) AS total_code_size,
+    s1.created_at AS submitted_at_1,
+    s2.created_at AS submitted_at_2
+FROM game_states gs1
+JOIN submissions s1 ON gs1.best_score_submission_id = s1.submission_id
+JOIN game_states gs2 ON gs1.user_id = gs2.user_id
+JOIN submissions s2 ON gs2.best_score_submission_id = s2.submission_id
+JOIN users u ON gs1.user_id = u.user_id
+WHERE gs1.game_id = $1 AND gs2.game_id = $2
+ORDER BY total_code_size ASC
+`
+
+type GetQualifyingRankingParams struct {
+	GameID   int32
+	GameID_2 int32
+}
+
+type GetQualifyingRankingRow struct {
+	Username      string
+	CodeSize1     int32
+	CodeSize2     int32
+	TotalCodeSize int32
+	SubmittedAt1  pgtype.Timestamp
+	SubmittedAt2  pgtype.Timestamp
+}
+
+func (q *Queries) GetQualifyingRanking(ctx context.Context, arg GetQualifyingRankingParams) ([]GetQualifyingRankingRow, error) {
+	rows, err := q.db.Query(ctx, getQualifyingRanking, arg.GameID, arg.GameID_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetQualifyingRankingRow
+	for rows.Next() {
+		var i GetQualifyingRankingRow
+		if err := rows.Scan(
+			&i.Username,
+			&i.CodeSize1,
+			&i.CodeSize2,
+			&i.TotalCodeSize,
+			&i.SubmittedAt1,
+			&i.SubmittedAt2,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getRanking = `-- name: GetRanking :many
 SELECT
     submissions.submission_id, submissions.game_id, submissions.user_id, submissions.code, submissions.code_size, submissions.status, submissions.created_at,

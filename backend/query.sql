@@ -132,6 +132,22 @@ JOIN submissions ON game_states.best_score_submission_id = submissions.submissio
 WHERE game_states.game_id = $1
 ORDER BY submissions.code_size ASC, submissions.created_at ASC;
 
+-- name: GetQualifyingRanking :many
+SELECT
+    u.username AS username,
+    s1.code_size AS code_size_1,
+    s2.code_size AS code_size_2,
+    (s1.code_size + s2.code_size) AS total_code_size,
+    s1.created_at AS submitted_at_1,
+    s2.created_at AS submitted_at_2
+FROM game_states gs1
+JOIN submissions s1 ON gs1.best_score_submission_id = s1.submission_id
+JOIN game_states gs2 ON gs1.user_id = gs2.user_id
+JOIN submissions s2 ON gs2.best_score_submission_id = s2.submission_id
+JOIN users u ON gs1.user_id = u.user_id
+WHERE gs1.game_id = $1 AND gs2.game_id = $2
+ORDER BY total_code_size ASC;
+
 -- name: UpdateCode :exec
 INSERT INTO game_states (game_id, user_id, code, status)
 VALUES ($1, $2, $3, $4)
