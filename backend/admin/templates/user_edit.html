@@ -20,7 +20,7 @@
   </div>
   <div>
     <label>Icon Path</label>
-    <input type="text" name="icon_path" value="{{ .User.IconPath }}">
+    <input type="text" name="icon_path" value="{{ if .User.IconPath }}{{ .User.IconPath }}{{ end }}">
   </div>
   <div>
     <label>Is Admin</label>
@@ -28,7 +28,7 @@
   </div>
   <div>
     <label>Label</label>
-    <input type="text" name="label" value="{{ .User.Label }}">
+    <input type="text" name="label" value="{{ if .User.Label }}{{ .User.Label }}{{ end }}">
   </div>
   <div>
     <button type="submit">Save</button>

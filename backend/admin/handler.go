@@ -320,6 +320,7 @@ func (h *Handler) postGameEdit(c echo.Context) error {
 		}
 	}
 
+	// TODO: transaction
 	err = h.q.UpdateGame(c.Request().Context(), db.UpdateGameParams{
 		GameID:          int32(gameID),
 		GameType:        gameType,
@@ -374,7 +375,7 @@ func (h *Handler) postGameStart(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid game id")
 	}
 
-	startedAt := time.Now().Add(11 * time.Second)
+	startedAt := time.Now().Add(10 * time.Second)
 
 	err = h.q.UpdateGameStartedAt(c.Request().Context(), db.UpdateGameStartedAtParams{
 		GameID: int32(gameID),
