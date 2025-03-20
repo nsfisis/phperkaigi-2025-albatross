@@ -276,6 +276,7 @@ func (q *Queries) GetLatestStatesOfMainPlayers(ctx context.Context, gameID int32
 const getQualifyingRanking = `-- name: GetQualifyingRanking :many
 SELECT
     u.username AS username,
+    u.label AS user_label,
     s1.code_size AS code_size_1,
     s2.code_size AS code_size_2,
     (s1.code_size + s2.code_size) AS total_code_size,
@@ -297,6 +298,7 @@ type GetQualifyingRankingParams struct {
 
 type GetQualifyingRankingRow struct {
 	Username      string
+	UserLabel     *string
 	CodeSize1     int32
 	CodeSize2     int32
 	TotalCodeSize int32
@@ -315,6 +317,7 @@ func (q *Queries) GetQualifyingRanking(ctx context.Context, arg GetQualifyingRan
 		var i GetQualifyingRankingRow
 		if err := rows.Scan(
 			&i.Username,
+			&i.UserLabel,
 			&i.CodeSize1,
 			&i.CodeSize2,
 			&i.TotalCodeSize,

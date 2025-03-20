@@ -413,6 +413,7 @@ func (h *Handler) getOnlineQualifyingRanking(c echo.Context) error {
 		entries[i] = echo.Map{
 			"Rank":         i + 1,
 			"Username":     r.Username,
+			"UserLabel":    r.UserLabel,
 			"Score1":       r.CodeSize1,
 			"Score2":       r.CodeSize2,
 			"TotalScore":   r.TotalCodeSize,

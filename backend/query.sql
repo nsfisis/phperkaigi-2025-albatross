@@ -135,6 +135,7 @@ ORDER BY submissions.code_size ASC, submissions.created_at ASC;
 -- name: GetQualifyingRanking :many
 SELECT
     u.username AS username,
+    u.label AS user_label,
     s1.code_size AS code_size_1,
     s2.code_size AS code_size_2,
     (s1.code_size + s2.code_size) AS total_code_size,

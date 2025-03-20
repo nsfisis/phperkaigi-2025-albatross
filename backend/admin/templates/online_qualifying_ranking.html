@@ -10,15 +10,18 @@
     <tr>
       <th scope="col">順位</th>
       <th scope="col">プレイヤー</th>
-      <th scope="col">スコア</th>
-      <th scope="col">提出時刻</th>
+      <th scope="col">スコア1</th>
+      <th scope="col">スコア2</th>
+      <th scope="col">合計スコア</th>
+      <th scope="col">提出時刻1</th>
+      <th scope="col">提出時刻2</th>
     </tr>
   </thead>
   <tbody>
     {{ range .Entries }}
       <tr>
         <td>{{ .Rank }}</td>
-        <td>{{ .Username }}</td>
+        <td>{{ .Username }}{{ if .UserLabel }} ({{ .UserLabel }}){{ end }}</td>
         <td>{{ .Score1 }}</td>
         <td>{{ .Score2 }}</td>
         <td>{{ .TotalScore }}</td>
