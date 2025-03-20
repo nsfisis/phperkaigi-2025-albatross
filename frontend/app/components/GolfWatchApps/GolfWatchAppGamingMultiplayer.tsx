@@ -4,6 +4,7 @@ import { gamingLeftTimeSecondsAtom } from "../../states/watch";
 import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
 import RankingTable from "../Gaming/RankingTable";
+import TwoColumnLayout from "../TwoColumnLayout";
 
 type RankingEntry = components["schemas"]["RankingEntry"];
 
@@ -34,7 +35,7 @@ export default function GolfWatchAppGamingMultiplayer({
 				</div>
 				<div className="font-bold flex justify-between my-auto"></div>
 			</div>
-			<div className="grow grid grid-cols-2 p-4 gap-4">
+			<TwoColumnLayout>
 				<Problem
 					title={problemTitle}
 					description={problemDescription}
@@ -44,7 +45,7 @@ export default function GolfWatchAppGamingMultiplayer({
 					<div className="text-center text-xl font-bold">順位表</div>
 					<RankingTable ranking={ranking} />
 				</div>
-			</div>
+			</TwoColumnLayout>
 		</div>
 	);
 }

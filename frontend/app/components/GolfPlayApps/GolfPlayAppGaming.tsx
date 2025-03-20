@@ -1,7 +1,6 @@
 import { useAtomValue } from "jotai";
 import React, { useRef, useState } from "react";
 import { Link } from "react-router";
-import SubmitButton from "../../components/SubmitButton";
 import {
 	gamingLeftTimeSecondsAtom,
 	scoreAtom,
@@ -11,7 +10,9 @@ import type { PlayerProfile } from "../../types/PlayerProfile";
 import BorderedContainer from "../BorderedContainer";
 import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
+import SubmitButton from "../SubmitButton";
 import SubmitStatusLabel from "../SubmitStatusLabel";
+import ThreeColumnLayout from "../ThreeColumnLayout";
 import UserIcon from "../UserIcon";
 
 function calcCodeSize(code: string): number {
@@ -87,7 +88,7 @@ export default function GolfPlayAppGaming({
 					</div>
 				</Link>
 			</div>
-			<div className="grow grid grid-cols-3 divide-x divide-gray-300">
+			<ThreeColumnLayout>
 				<Problem
 					title={problemTitle}
 					description={problemDescription}
@@ -142,7 +143,7 @@ export default function GolfPlayAppGaming({
 						過去の提出結果を閲覧する機能は現在実装中です。それまでは提出コードをお手元に保管しておいてください。
 					</p>
 				</div>
-			</div>
+			</ThreeColumnLayout>
 		</div>
 	);
 }

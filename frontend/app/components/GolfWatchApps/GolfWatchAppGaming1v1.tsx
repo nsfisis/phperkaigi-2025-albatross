@@ -9,6 +9,7 @@ import LeftTime from "../Gaming/LeftTime";
 import Problem from "../Gaming/Problem";
 import ScoreBar from "../Gaming/ScoreBar";
 import SubmitResult from "../Gaming/SubmitResult";
+import ThreeColumnLayout from "../ThreeColumnLayout";
 import UserIcon from "../UserIcon";
 
 type Props = {
@@ -106,7 +107,7 @@ export default function GolfWatchAppGaming1v1({
 				bgA="bg-orange-400"
 				bgB="bg-purple-400"
 			/>
-			<div className="grow grid grid-cols-3 p-4 gap-4">
+			<ThreeColumnLayout>
 				<CodeBlock code={codeA} language="php" />
 				<div className="flex flex-col gap-4">
 					<div className="grid grid-cols-2 gap-4">
@@ -120,7 +121,7 @@ export default function GolfWatchAppGaming1v1({
 					/>
 				</div>
 				<CodeBlock code={codeB} language="php" />
-			</div>
+			</ThreeColumnLayout>
 		</div>
 	);
 }
