@@ -1,4 +1,4 @@
-import BorderedContainerWithCaption from "../BorderedContainerWithCaption";
+import FoldableBorderedContainerWithCaption from "../FoldableBorderedContainerWithCaption";
 import TitledColumn from "../TitledColumn";
 import CodeBlock from "./CodeBlock";
 import InlineCode from "./InlineCode";
@@ -16,15 +16,15 @@ export default function ProblemColumn({
 }: Props) {
 	return (
 		<TitledColumn title={title}>
-			<BorderedContainerWithCaption caption="問題">
+			<FoldableBorderedContainerWithCaption caption="問題">
 				<pre className="text-gray-700 whitespace-pre-wrap break-words">
 					{description}
 				</pre>
-			</BorderedContainerWithCaption>
-			<BorderedContainerWithCaption caption="サンプルコード">
+			</FoldableBorderedContainerWithCaption>
+			<FoldableBorderedContainerWithCaption caption="サンプルコード">
 				<CodeBlock code={sampleCode} language="php" />
-			</BorderedContainerWithCaption>
-			<BorderedContainerWithCaption caption="スコア計算・PHP 環境">
+			</FoldableBorderedContainerWithCaption>
+			<FoldableBorderedContainerWithCaption caption="スコア計算・PHP 環境">
 				<div className="text-gray-700 flex flex-col gap-2">
 					<p>
 						スコアはコード中の全 ASCII
@@ -54,7 +54,7 @@ export default function ProblemColumn({
 						に設定されています。
 					</p>
 				</div>
-			</BorderedContainerWithCaption>
+			</FoldableBorderedContainerWithCaption>
 		</TitledColumn>
 	);
 }

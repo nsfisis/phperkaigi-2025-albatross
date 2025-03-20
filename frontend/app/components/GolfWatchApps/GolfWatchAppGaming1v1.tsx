@@ -5,7 +5,7 @@ import {
 	latestGameStatesAtom,
 } from "../../states/watch";
 import type { PlayerProfile } from "../../types/PlayerProfile";
-import BorderedContainer from "../BorderedContainer";
+import FoldableBorderedContainerWithCaption from "../FoldableBorderedContainerWithCaption";
 import CodeBlock from "../Gaming/CodeBlock";
 import LeftTime from "../Gaming/LeftTime";
 import ProblemColumn from "../Gaming/ProblemColumn";
@@ -109,12 +109,11 @@ export default function GolfWatchAppGaming1v1({
 			/>
 			<ThreeColumnLayout>
 				<TitledColumn title={<SubmitStatusLabel status={statusA} />}>
-					<BorderedContainer className="grow flex flex-col gap-4">
-						<div className="text-center font-semibold text-lg">
-							コードサイズ: {codeSizeA}
-						</div>
+					<FoldableBorderedContainerWithCaption
+						caption={`コードサイズ: ${codeSizeA}`}
+					>
 						<CodeBlock code={codeA} language="php" />
-					</BorderedContainer>
+					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
 				<ProblemColumn
 					title={problemTitle}
@@ -122,12 +121,11 @@ export default function GolfWatchAppGaming1v1({
 					sampleCode={sampleCode}
 				/>
 				<TitledColumn title={<SubmitStatusLabel status={statusB} />}>
-					<BorderedContainer className="grow flex flex-col gap-4">
-						<div className="text-center font-semibold text-lg">
-							コードサイズ: {codeSizeB}
-						</div>
+					<FoldableBorderedContainerWithCaption
+						caption={`コードサイズ: ${codeSizeB}`}
+					>
 						<CodeBlock code={codeB} language="php" />
-					</BorderedContainer>
+					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
 			</ThreeColumnLayout>
 		</div>
