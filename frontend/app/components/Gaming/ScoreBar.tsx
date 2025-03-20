@@ -24,7 +24,7 @@ export default function ScoreBar({ scoreA, scoreB, bgA, bgB }: Props) {
 
 	return (
 		<div className={`w-full ${bgB}`}>
-			<div className={`h-6 ${bgA}`} style={{ width: `${scoreRatio}%` }}></div>
+			<div className={`h-10 ${bgA}`} style={{ width: `${scoreRatio}%` }}></div>
 		</div>
 	);
 }
