@@ -68,18 +68,18 @@ export default function GolfWatchAppGaming1v1({
 			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
 				<div className="font-bold flex gap-4 justify-start md:justify-between items-center my-auto">
 					<div className="flex gap-6 items-center">
-						{playerProfileB?.iconPath && (
+						{playerProfileA?.iconPath && (
 							<UserIcon
-								iconPath={playerProfileB.iconPath}
-								displayName={playerProfileB.displayName}
+								iconPath={playerProfileA.iconPath}
+								displayName={playerProfileA.displayName}
 								className="w-12 h-12 my-auto"
 							/>
 						)}
 						<div className="hidden md:block text-4xl">
-							{playerProfileB?.displayName}
+							{playerProfileA?.displayName}
 						</div>
 					</div>
-					<div className="text-2xl md:text-6xl">{scoreB}</div>
+					<div className="text-2xl md:text-6xl">{scoreA}</div>
 				</div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
