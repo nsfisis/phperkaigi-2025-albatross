@@ -58,16 +58,11 @@ export default function Dashboard() {
 							{games.map((game) => (
 								<li
 									key={game.game_id}
-									className="flex justify-between items-center py-3 gap-3"
+									className="flex justify-between items-center py-2 gap-4"
 								>
 									<div>
 										<span className="font-medium text-gray-800">
 											{game.display_name}
-										</span>
-										<span className="text-sm text-gray-500 ml-2">
-											{game.game_type === "multiplayer"
-												? " (マルチ)"
-												: " (1v1)"}
 										</span>
 									</div>
 									<div className="flex gap-2">
