@@ -378,11 +378,17 @@ components:
           type: integer
           nullable: true
           example: 100
+        best_score_submitted_at:
+          type: integer
+          nullable: true
+          example: 946684800
+          x-go-type: int64
         status:
           $ref: '#/components/schemas/ExecutionStatus'
       required:
         - code
         - score
+        - best_score_submitted_at
         - status
     RankingEntry:
       type: object

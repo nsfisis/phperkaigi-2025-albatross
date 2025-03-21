@@ -1,6 +1,8 @@
 import { useAtomValue } from "jotai";
 import {
 	calcCodeSize,
+	checkGameResultKind,
+	gameStateKindAtom,
 	gamingLeftTimeSecondsAtom,
 	latestGameStatesAtom,
 } from "../../states/watch";
@@ -23,7 +25,6 @@ type Props = {
 	problemTitle: string;
 	problemDescription: string;
 	sampleCode: string;
-	gameResult: "winA" | "winB" | "draw" | null;
 };
 
 export default function GolfWatchAppGaming1v1({
@@ -33,16 +34,16 @@ export default function GolfWatchAppGaming1v1({
 	problemTitle,
 	problemDescription,
 	sampleCode,
-	gameResult,
 }: Props) {
+	const gameStateKind = useAtomValue(gameStateKindAtom);
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const latestGameStates = useAtomValue(latestGameStatesAtom);
 
-	const stateA = latestGameStates[`${playerProfileA.id}`];
+	const stateA = latestGameStates[`${playerProfileA.id}`] ?? null;
 	const codeA = stateA?.code ?? "";
 	const scoreA = stateA?.score ?? null;
 	const statusA = stateA?.status ?? "none";
-	const stateB = latestGameStates[`${playerProfileB.id}`];
+	const stateB = latestGameStates[`${playerProfileB.id}`] ?? null;
 	const codeB = stateB?.code ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
@@ -50,10 +51,12 @@ export default function GolfWatchAppGaming1v1({
 	const codeSizeA = calcCodeSize(codeA);
 	const codeSizeB = calcCodeSize(codeB);
 
-	const topBg = gameResult
-		? gameResult === "winA"
+	const gameResultKind = checkGameResultKind(gameStateKind, stateA, stateB);
+
+	const topBg = gameResultKind
+		? gameResultKind === "winA"
 			? "bg-orange-400"
-			: gameResult === "winB"
+			: gameResultKind === "winB"
 				? "bg-purple-400"
 				: "bg-sky-600"
 		: "bg-sky-600";
@@ -76,11 +79,11 @@ export default function GolfWatchAppGaming1v1({
 				</div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
-					{gameResult ? (
+					{gameResultKind ? (
 						<div className="text-3xl">
-							{gameResult === "winA"
+							{gameResultKind === "winA"
 								? `勝者 ${playerProfileA.displayName}`
-								: gameResult === "winB"
+								: gameResultKind === "winB"
 									? `勝者 ${playerProfileB.displayName}`
 									: "引き分け"}
 						</div>

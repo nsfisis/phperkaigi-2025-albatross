@@ -186,9 +186,10 @@ func (h *Handler) GetGamePlayLatestState(ctx context.Context, request GetGamePla
 		if errors.Is(err, pgx.ErrNoRows) {
 			return GetGamePlayLatestState200JSONResponse{
 				State: LatestGameState{
-					Code:   "",
-					Score:  nullable.NewNullNullable[int](),
-					Status: None,
+					Code:                 "",
+					Score:                nullable.NewNullNullable[int](),
+					BestScoreSubmittedAt: nullable.NewNullNullable[int64](),
+					Status:               None,
 				},
 			}, nil
 		}
@@ -196,9 +197,10 @@ func (h *Handler) GetGamePlayLatestState(ctx context.Context, request GetGamePla
 	}
 	return GetGamePlayLatestState200JSONResponse{
 		State: LatestGameState{
-			Code:   row.Code,
-			Score:  toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
-			Status: ExecutionStatus(row.Status),
+			Code:                 row.Code,
+			Score:                toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
+			BestScoreSubmittedAt: nullable.NewNullableWithValue(row.CreatedAt.Time.Unix()),
+			Status:               ExecutionStatus(row.Status),
 		},
 	}, nil
 }
@@ -222,9 +224,10 @@ func (h *Handler) GetGameWatchLatestStates(ctx context.Context, request GetGameW
 			status = None
 		}
 		states[strconv.Itoa(int(row.UserID))] = LatestGameState{
-			Code:   code,
-			Score:  toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
-			Status: status,
+			Code:                 code,
+			Score:                toNullableWith(row.CodeSize, func(x int32) int { return int(x) }),
+			BestScoreSubmittedAt: nullable.NewNullableWithValue(row.CreatedAt.Time.Unix()),
+			Status:               status,
 		}
 
 		if int(row.UserID) == user.UserID && !user.IsAdmin {

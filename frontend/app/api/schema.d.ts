@@ -201,6 +201,8 @@ export interface components {
             code: string;
             /** @example 100 */
             score: number | null;
+            /** @example 946684800 */
+            best_score_submitted_at: number | null;
             status: components["schemas"]["ExecutionStatus"];
         };
         RankingEntry: {
