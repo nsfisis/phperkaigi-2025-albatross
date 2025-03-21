@@ -130,7 +130,8 @@ FROM game_states
 JOIN users ON game_states.user_id = users.user_id
 JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
 WHERE game_states.game_id = $1
-ORDER BY submissions.code_size ASC, submissions.created_at ASC;
+ORDER BY submissions.code_size ASC, submissions.created_at ASC
+LIMIT 30;
 
 -- name: GetQualifyingRanking :many
 SELECT
