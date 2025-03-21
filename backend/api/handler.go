@@ -292,7 +292,7 @@ func (h *Handler) PostGamePlaySubmit(ctx context.Context, request PostGamePlaySu
 	code := request.Body.Code
 	codeSize := h.hub.CalcCodeSize(code)
 	// TODO: transaction
-	err := h.q.UpdateCode(ctx, db.UpdateCodeParams{
+	err := h.q.UpdateCodeAndStatus(ctx, db.UpdateCodeAndStatusParams{
 		GameID: int32(gameID),
 		UserID: int32(userID),
 		Code:   code,

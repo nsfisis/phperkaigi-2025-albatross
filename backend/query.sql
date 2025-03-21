@@ -156,6 +156,12 @@ VALUES ($1, $2, $3, $4)
 ON CONFLICT (game_id, user_id)
 DO UPDATE SET code = EXCLUDED.code;
 
+-- name: UpdateCodeAndStatus :exec
+INSERT INTO game_states (game_id, user_id, code, status)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (game_id, user_id)
+DO UPDATE SET code = EXCLUDED.code, status = EXCLUDED.status;
+
 -- name: CreateSubmission :one
 INSERT INTO submissions (game_id, user_id, code, code_size, status)
 VALUES ($1, $2, $3, $4, 'running')

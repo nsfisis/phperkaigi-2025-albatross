@@ -343,6 +343,7 @@ JOIN users ON game_states.user_id = users.user_id
 JOIN submissions ON game_states.best_score_submission_id = submissions.submission_id
 WHERE game_states.game_id = $1
 ORDER BY submissions.code_size ASC, submissions.created_at ASC
+LIMIT 30
 `
 
 type GetRankingRow struct {
@@ -708,6 +709,30 @@ type UpdateCodeParams struct {
 
 func (q *Queries) UpdateCode(ctx context.Context, arg UpdateCodeParams) error {
 	_, err := q.db.Exec(ctx, updateCode,
+		arg.GameID,
+		arg.UserID,
+		arg.Code,
+		arg.Status,
+	)
+	return err
+}
+
+const updateCodeAndStatus = `-- name: UpdateCodeAndStatus :exec
+INSERT INTO game_states (game_id, user_id, code, status)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (game_id, user_id)
+DO UPDATE SET code = EXCLUDED.code, status = EXCLUDED.status
+`
+
+type UpdateCodeAndStatusParams struct {
+	GameID int32
+	UserID int32
+	Code   string
+	Status string
+}
+
+func (q *Queries) UpdateCodeAndStatus(ctx context.Context, arg UpdateCodeAndStatusParams) error {
+	_, err := q.db.Exec(ctx, updateCodeAndStatus,
 		arg.GameID,
 		arg.UserID,
 		arg.Code,

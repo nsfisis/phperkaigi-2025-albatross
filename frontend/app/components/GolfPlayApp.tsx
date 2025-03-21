@@ -61,15 +61,20 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 		}
 	}, 1000);
 
-	const onCodeSubmit = useDebouncedCallback(async (code: string) => {
-		if (code === "") {
-			return;
-		}
-		console.log("player:c2s:submit");
-		handleSubmitCodePre();
-		await apiClient.postGamePlaySubmit(game.game_id, code);
-		handleSubmitCodePost();
-	}, 1000);
+	const onCodeSubmit = useDebouncedCallback(
+		async (code: string) => {
+			if (code === "") {
+				return;
+			}
+			console.log("player:c2s:submit");
+			handleSubmitCodePre();
+			await apiClient.postGamePlaySubmit(game.game_id, code);
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			handleSubmitCodePost();
+		},
+		1000,
+		{ leading: true },
+	);
 
 	const [isDataPolling, setIsDataPolling] = useState(false);
 
