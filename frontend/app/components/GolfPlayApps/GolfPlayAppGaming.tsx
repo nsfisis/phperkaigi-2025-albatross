@@ -26,6 +26,7 @@ type Props = {
 	initialCode: string;
 	onCodeChange: (code: string) => void;
 	onCodeSubmit: (code: string) => void;
+	isFinished: boolean;
 };
 
 export default function GolfPlayAppGaming({
@@ -37,6 +38,7 @@ export default function GolfPlayAppGaming({
 	initialCode,
 	onCodeChange,
 	onCodeSubmit,
+	isFinished,
 }: Props) {
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const score = useAtomValue(scoreAtom);
@@ -47,11 +49,13 @@ export default function GolfPlayAppGaming({
 
 	const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCodeSize(calcCodeSize(e.target.value));
-		onCodeChange(e.target.value);
+		if (!isFinished) {
+			onCodeChange(e.target.value);
+		}
 	};
 
 	const handleSubmitButtonClick = () => {
-		if (textareaRef.current) {
+		if (textareaRef.current && !isFinished) {
 			onCodeSubmit(textareaRef.current.value);
 		}
 	};
@@ -61,7 +65,11 @@ export default function GolfPlayAppGaming({
 			<div className="text-white bg-sky-600 flex flex-row justify-between px-4 py-2">
 				<div className="font-bold">
 					<div className="text-gray-100">{gameDisplayName}</div>
-					<LeftTime sec={leftTimeSeconds} />
+					{isFinished ? (
+						<div className="text-2xl md:text-3xl">終了</div>
+					) : (
+						<LeftTime sec={leftTimeSeconds} />
+					)}
 				</div>
 				<Link to={"/dashboard"}>
 					<div className="flex gap-6 items-center font-bold">
@@ -91,7 +99,10 @@ export default function GolfPlayAppGaming({
 							<div className="grow font-semibold text-lg">
 								コードサイズ: {codeSize}
 							</div>
-							<SubmitButton onClick={handleSubmitButtonClick}>
+							<SubmitButton
+								onClick={handleSubmitButtonClick}
+								disabled={isFinished}
+							>
 								提出
 							</SubmitButton>
 						</div>

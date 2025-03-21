@@ -14,7 +14,6 @@ import {
 	setGameStartedAtAtom,
 	setLatestGameStateAtom,
 } from "../states/play";
-import GolfPlayAppFinished from "./GolfPlayApps/GolfPlayAppFinished";
 import GolfPlayAppGaming from "./GolfPlayApps/GolfPlayAppGaming";
 import GolfPlayAppLoading from "./GolfPlayApps/GolfPlayAppLoading";
 import GolfPlayAppStarting from "./GolfPlayApps/GolfPlayAppStarting";
@@ -130,7 +129,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 		);
 	} else if (gameStateKind === "starting") {
 		return <GolfPlayAppStarting gameDisplayName={game.display_name} />;
-	} else if (gameStateKind === "gaming") {
+	} else if (gameStateKind === "gaming" || gameStateKind === "finished") {
 		return (
 			<GolfPlayAppGaming
 				gameDisplayName={game.display_name}
@@ -141,9 +140,8 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 				initialCode={initialGameState.code}
 				onCodeChange={onCodeChange}
 				onCodeSubmit={onCodeSubmit}
+				isFinished={gameStateKind === "finished"}
 			/>
 		);
-	} else if (gameStateKind === "finished") {
-		return <GolfPlayAppFinished />;
 	}
 }

@@ -274,6 +274,7 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 func (h *Handler) PostGamePlayCode(ctx context.Context, request PostGamePlayCodeRequestObject, user *auth.JWTClaims) (PostGamePlayCodeResponseObject, error) {
 	gameID := request.GameID
 	userID := user.UserID
+	// TODO: check if the game is running
 	err := h.q.UpdateCode(ctx, db.UpdateCodeParams{
 		GameID: int32(gameID),
 		UserID: int32(userID),
@@ -291,6 +292,7 @@ func (h *Handler) PostGamePlaySubmit(ctx context.Context, request PostGamePlaySu
 	userID := user.UserID
 	code := request.Body.Code
 	codeSize := h.hub.CalcCodeSize(code)
+	// TODO: check if the game is running
 	// TODO: transaction
 	err := h.q.UpdateCodeAndStatus(ctx, db.UpdateCodeAndStatusParams{
 		GameID: int32(gameID),
