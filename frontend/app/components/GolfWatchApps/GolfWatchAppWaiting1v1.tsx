@@ -3,8 +3,8 @@ import PlayerNameAndIcon from "../PlayerNameAndIcon";
 
 type Props = {
 	gameDisplayName: string;
-	playerProfileA: PlayerProfile;
-	playerProfileB: PlayerProfile;
+	playerProfileA: PlayerProfile | null;
+	playerProfileB: PlayerProfile | null;
 };
 
 export default function GolfWatchAppWaiting1v1({
@@ -18,9 +18,17 @@ export default function GolfWatchAppWaiting1v1({
 				<div className="text-4xl">{gameDisplayName}</div>
 			</div>
 			<div className="grow grid grid-cols-3 gap-10 mx-auto text-black">
-				<PlayerNameAndIcon profile={playerProfileA} />
+				{playerProfileA ? (
+					<PlayerNameAndIcon profile={playerProfileA} />
+				) : (
+					<div></div>
+				)}
 				<div className="text-8xl my-auto">vs.</div>
-				<PlayerNameAndIcon profile={playerProfileB} />
+				{playerProfileB ? (
+					<PlayerNameAndIcon profile={playerProfileB} />
+				) : (
+					<div></div>
+				)}
 			</div>
 		</div>
 	);

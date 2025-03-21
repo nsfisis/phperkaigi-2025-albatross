@@ -121,8 +121,8 @@ export default function GolfWatchApp({
 		return game.game_type === "1v1" ? (
 			<GolfWatchAppWaiting1v1
 				gameDisplayName={game.display_name}
-				playerProfileA={playerProfileA!}
-				playerProfileB={playerProfileB!}
+				playerProfileA={playerProfileA}
+				playerProfileB={playerProfileB}
 			/>
 		) : (
 			<GolfWatchAppWaitingMultiplayer gameDisplayName={game.display_name} />
@@ -133,8 +133,8 @@ export default function GolfWatchApp({
 		return game.game_type === "1v1" ? (
 			<GolfWatchAppGaming1v1
 				gameDisplayName={game.display_name}
-				playerProfileA={playerProfileA!}
-				playerProfileB={playerProfileB!}
+				playerProfileA={playerProfileA}
+				playerProfileB={playerProfileB}
 				problemTitle={game.problem.title}
 				problemDescription={game.problem.description}
 				sampleCode={game.problem.sample_code}

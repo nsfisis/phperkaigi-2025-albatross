@@ -20,8 +20,8 @@ import UserIcon from "../UserIcon";
 
 type Props = {
 	gameDisplayName: string;
-	playerProfileA: PlayerProfile;
-	playerProfileB: PlayerProfile;
+	playerProfileA: PlayerProfile | null;
+	playerProfileB: PlayerProfile | null;
 	problemTitle: string;
 	problemDescription: string;
 	sampleCode: string;
@@ -39,11 +39,13 @@ export default function GolfWatchAppGaming1v1({
 	const leftTimeSeconds = useAtomValue(gamingLeftTimeSecondsAtom)!;
 	const latestGameStates = useAtomValue(latestGameStatesAtom);
 
-	const stateA = latestGameStates[`${playerProfileA.id}`] ?? null;
+	const stateA =
+		playerProfileA && (latestGameStates[`${playerProfileA.id}`] ?? null);
 	const codeA = stateA?.code ?? "";
 	const scoreA = stateA?.score ?? null;
 	const statusA = stateA?.status ?? "none";
-	const stateB = latestGameStates[`${playerProfileB.id}`] ?? null;
+	const stateB =
+		playerProfileB && (latestGameStates[`${playerProfileB.id}`] ?? null);
 	const codeB = stateB?.code ?? "";
 	const scoreB = stateB?.score ?? null;
 	const statusB = stateB?.status ?? "none";
@@ -66,14 +68,14 @@ export default function GolfWatchAppGaming1v1({
 			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
 				<div className="font-bold flex justify-between my-auto">
 					<div className="flex gap-6 items-center">
-						{playerProfileA.iconPath && (
+						{playerProfileA?.iconPath && (
 							<UserIcon
 								iconPath={playerProfileA.iconPath}
 								displayName={playerProfileA.displayName}
 								className="w-12 h-12 my-auto"
 							/>
 						)}
-						<div className="text-4xl">{playerProfileA.displayName}</div>
+						<div className="text-4xl">{playerProfileA?.displayName}</div>
 					</div>
 					<div className="text-6xl">{scoreA}</div>
 				</div>
@@ -82,9 +84,9 @@ export default function GolfWatchAppGaming1v1({
 					{gameResultKind ? (
 						<div className="text-3xl">
 							{gameResultKind === "winA"
-								? `勝者 ${playerProfileA.displayName}`
+								? `勝者 ${playerProfileA!.displayName}`
 								: gameResultKind === "winB"
-									? `勝者 ${playerProfileB.displayName}`
+									? `勝者 ${playerProfileB!.displayName}`
 									: "引き分け"}
 						</div>
 					) : (
@@ -94,8 +96,8 @@ export default function GolfWatchAppGaming1v1({
 				<div className="font-bold flex justify-between my-auto">
 					<div className="text-6xl">{scoreB}</div>
 					<div className="flex gap-6 items-center text-end">
-						<div className="text-4xl">{playerProfileB.displayName}</div>
-						{playerProfileB.iconPath && (
+						<div className="text-4xl">{playerProfileB?.displayName}</div>
+						{playerProfileB?.iconPath && (
 							<UserIcon
 								iconPath={playerProfileB.iconPath}
 								displayName={playerProfileB.displayName}
