@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, type JwtPayload } from "jwt-decode";
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
@@ -58,26 +58,38 @@ export async function logout(request: Request): Promise<never> {
 	});
 }
 
-export async function ensureUserLoggedIn(
+async function getCurrentValidSession(
 	request: Request,
-): Promise<{ user: User; token: string }> {
+): Promise<{ user: User; token: string } | null> {
 	const session = await sessionStorage.getSession(
 		request.headers.get("cookie"),
 	);
 	const token = session.get("user");
 	if (!token) {
-		throw redirect("/login");
+		return null;
 	}
-	const user = jwtDecode<User>(token);
+	const user = jwtDecode<User & JwtPayload>(token);
+	const exp = user.exp;
+	if (exp != null && new Date((exp - 3600) * 1000) < new Date()) {
+		// If the token will expire in less than an hour, refresh it.
+		return null;
+	}
 	return { user, token };
 }
 
+export async function ensureUserLoggedIn(
+	request: Request,
+): Promise<{ user: User; token: string }> {
+	const session = await getCurrentValidSession(request);
+	if (!session) {
+		throw redirect("/login");
+	}
+	return session;
+}
+
 export async function ensureUserNotLoggedIn(request: Request): Promise<null> {
-	const session = await sessionStorage.getSession(
-		request.headers.get("cookie"),
-	);
-	const token = session.get("user");
-	if (token) {
+	const session = await getCurrentValidSession(request);
+	if (session) {
 		throw redirect("/dashboard");
 	}
 	return null;
