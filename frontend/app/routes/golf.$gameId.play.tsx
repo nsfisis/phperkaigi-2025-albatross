@@ -1,7 +1,7 @@
 import { Provider as JotaiProvider, createStore } from "jotai";
 import { useMemo } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { useLoaderData } from "react-router";
+import { redirect, useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
 import { ApiClientContext, createApiClient } from "../api/client";
 import GolfPlayApp from "../components/GolfPlayApp";
@@ -20,17 +20,21 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 	const gameId = Number(params.gameId);
 
-	const [{ game }, { state: gameState }] = await Promise.all([
-		apiClient.getGame(gameId),
-		apiClient.getGamePlayLatestState(gameId),
-	]);
+	try {
+		const [{ game }, { state: gameState }] = await Promise.all([
+			apiClient.getGame(gameId),
+			apiClient.getGamePlayLatestState(gameId),
+		]);
 
-	return {
-		apiToken: token,
-		game,
-		player: user,
-		gameState,
-	};
+		return {
+			apiToken: token,
+			game,
+			player: user,
+			gameState,
+		};
+	} catch {
+		throw redirect("/dashboard");
+	}
 }
 
 export default function GolfPlay() {

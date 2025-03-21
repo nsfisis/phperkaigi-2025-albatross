@@ -1,4 +1,4 @@
-import { jwtDecode, type JwtPayload } from "jwt-decode";
+import { type JwtPayload, jwtDecode } from "jwt-decode";
 import { redirect } from "react-router";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";

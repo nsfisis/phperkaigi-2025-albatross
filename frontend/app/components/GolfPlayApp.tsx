@@ -68,7 +68,7 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 			console.log("player:c2s:submit");
 			handleSubmitCodePre();
 			await apiClient.postGamePlaySubmit(game.game_id, code);
-			await new Promise((resolve) => setTimeout(resolve, 2000));
+			await new Promise((resolve) => setTimeout(resolve, 1000));
 			handleSubmitCodePost();
 		},
 		1000,

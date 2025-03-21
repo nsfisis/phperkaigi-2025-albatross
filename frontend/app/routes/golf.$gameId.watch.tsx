@@ -1,7 +1,7 @@
 import { Provider as JotaiProvider, createStore } from "jotai";
 import { useMemo } from "react";
 import type { LoaderFunctionArgs, MetaFunction } from "react-router";
-import { useLoaderData } from "react-router";
+import { redirect, useLoaderData } from "react-router";
 import { ensureUserLoggedIn } from "../.server/auth";
 import { ApiClientContext, createApiClient } from "../api/client";
 import GolfWatchApp from "../components/GolfWatchApp";
@@ -20,18 +20,22 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 	const gameId = Number(params.gameId);
 
-	const [{ game }, { ranking }, { states: gameStates }] = await Promise.all([
-		await apiClient.getGame(gameId),
-		await apiClient.getGameWatchRanking(gameId),
-		await apiClient.getGameWatchLatestStates(gameId),
-	]);
+	try {
+		const [{ game }, { ranking }, { states: gameStates }] = await Promise.all([
+			await apiClient.getGame(gameId),
+			await apiClient.getGameWatchRanking(gameId),
+			await apiClient.getGameWatchLatestStates(gameId),
+		]);
 
-	return {
-		apiToken: token,
-		game,
-		ranking,
-		gameStates,
-	};
+		return {
+			apiToken: token,
+			game,
+			ranking,
+			gameStates,
+		};
+	} catch {
+		throw redirect("/dashboard");
+	}
 }
 
 export default function GolfWatch() {
