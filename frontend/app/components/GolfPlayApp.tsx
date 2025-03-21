@@ -55,8 +55,8 @@ export default function GolfPlayApp({ game, player, initialGameState }: Props) {
 	};
 
 	const onCodeChange = useDebouncedCallback(async (code: string) => {
-		console.log("player:c2s:code");
 		if (game.game_type === "1v1") {
+			console.log("player:c2s:code");
 			await apiClient.postGamePlayCode(game.game_id, code);
 		}
 	}, 1000);

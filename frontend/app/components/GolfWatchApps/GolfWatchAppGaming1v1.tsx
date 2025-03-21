@@ -66,18 +66,20 @@ export default function GolfWatchAppGaming1v1({
 	return (
 		<div className="min-h-screen bg-gray-100 flex flex-col">
 			<div className={`text-white ${topBg} grid grid-cols-3 px-4 py-2`}>
-				<div className="font-bold flex justify-between my-auto">
+				<div className="font-bold flex gap-4 justify-start md:justify-between items-center my-auto">
 					<div className="flex gap-6 items-center">
-						{playerProfileA?.iconPath && (
+						{playerProfileB?.iconPath && (
 							<UserIcon
-								iconPath={playerProfileA.iconPath}
-								displayName={playerProfileA.displayName}
+								iconPath={playerProfileB.iconPath}
+								displayName={playerProfileB.displayName}
 								className="w-12 h-12 my-auto"
 							/>
 						)}
-						<div className="text-4xl">{playerProfileA?.displayName}</div>
+						<div className="hidden md:block text-4xl">
+							{playerProfileB?.displayName}
+						</div>
 					</div>
-					<div className="text-6xl">{scoreA}</div>
+					<div className="text-2xl md:text-6xl">{scoreB}</div>
 				</div>
 				<div className="font-bold text-center">
 					<div className="text-gray-100">{gameDisplayName}</div>
@@ -93,10 +95,12 @@ export default function GolfWatchAppGaming1v1({
 						<LeftTime sec={leftTimeSeconds} />
 					)}
 				</div>
-				<div className="font-bold flex justify-between my-auto">
-					<div className="text-6xl">{scoreB}</div>
+				<div className="font-bold flex gap-4 justify-end md:justify-between items-center my-auto">
+					<div className="text-2xl md:text-6xl">{scoreB}</div>
 					<div className="flex gap-6 items-center text-end">
-						<div className="text-4xl">{playerProfileB?.displayName}</div>
+						<div className="hidden md:block text-4xl">
+							{playerProfileB?.displayName}
+						</div>
 						{playerProfileB?.iconPath && (
 							<UserIcon
 								iconPath={playerProfileB.iconPath}
@@ -114,21 +118,27 @@ export default function GolfWatchAppGaming1v1({
 				bgB="bg-purple-400"
 			/>
 			<ThreeColumnLayout>
-				<TitledColumn title={<SubmitStatusLabel status={statusA} />}>
+				<TitledColumn
+					title={<SubmitStatusLabel status={statusA} />}
+					className="order-2 md:order-1"
+				>
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeA}`}
 					>
 						<CodeBlock code={codeA} language="php" />
 					</FoldableBorderedContainerWithCaption>
 				</TitledColumn>
-				<TitledColumn title={problemTitle}>
+				<TitledColumn title={problemTitle} className="order-1 md:order-2">
 					<ProblemColumnContent
 						description={problemDescription}
 						sampleCode={sampleCode}
 					/>
 					<RankingTable />
 				</TitledColumn>
-				<TitledColumn title={<SubmitStatusLabel status={statusB} />}>
+				<TitledColumn
+					title={<SubmitStatusLabel status={statusB} />}
+					className="order-3"
+				>
 					<FoldableBorderedContainerWithCaption
 						caption={`コードサイズ: ${codeSizeB}`}
 					>

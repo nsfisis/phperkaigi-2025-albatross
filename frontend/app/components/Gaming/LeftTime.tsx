@@ -22,5 +22,5 @@ export default function LeftTime({ sec }: Props) {
 		leftTime = `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 	}
 
-	return <div className="text-3xl">{leftTime}</div>;
+	return <div className="text-2xl md:text-3xl">{leftTime}</div>;
 }

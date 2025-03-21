@@ -65,8 +65,10 @@ export default function GolfPlayAppGaming({
 				</div>
 				<Link to={"/dashboard"}>
 					<div className="flex gap-6 items-center font-bold">
-						<div className="text-6xl">{score}</div>
-						<div className="text-4xl">{playerProfile.displayName}</div>
+						<div className="text-2xl md:text-6xl">{score}</div>
+						<div className="hidden md:block text-4xl">
+							{playerProfile.displayName}
+						</div>
 						{playerProfile.iconPath && (
 							<UserIcon
 								iconPath={playerProfile.iconPath}
@@ -98,6 +100,7 @@ export default function GolfPlayAppGaming({
 							defaultValue={initialCode}
 							onChange={handleTextChange}
 							className="grow resize-none h-full w-full p-2 bg-gray-50 rounded-lg border border-gray-300 focus:outline-hidden focus:ring-2 focus:ring-gray-400 transition duration-300"
+							rows={10}
 						/>
 					</BorderedContainer>
 				</TitledColumn>
