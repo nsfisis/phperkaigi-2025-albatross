@@ -1,6 +1,7 @@
 import { useAtomValue } from "jotai";
 import React from "react";
 import { rankingAtom } from "../../states/watch";
+import CodePopover from "./CodePopover";
 
 function TableHeaderCell({ children }: { children: React.ReactNode }) {
 	return (
@@ -40,6 +41,7 @@ export default function RankingTable() {
 						<TableHeaderCell>プレイヤー</TableHeaderCell>
 						<TableHeaderCell>スコア</TableHeaderCell>
 						<TableHeaderCell>提出時刻</TableHeaderCell>
+						<TableHeaderCell>コード</TableHeaderCell>
 					</tr>
 				</thead>
 				<tbody className="bg-white divide-y divide-gray-300">
@@ -53,6 +55,9 @@ export default function RankingTable() {
 							<TableBodyCell>{entry.score}</TableBodyCell>
 							<TableBodyCell>
 								{formatUnixTimestamp(entry.submitted_at)}
+							</TableBodyCell>
+							<TableBodyCell>
+								{entry.code && <CodePopover code={entry.code} />}
 							</TableBodyCell>
 						</tr>
 					))}

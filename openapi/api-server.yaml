@@ -402,7 +402,12 @@ components:
           type: integer
           example: 946684800
           x-go-type: int64
+        code:
+          type: string
+          nullable: true
+          example: "echo 'hello world';"
       required:
         - player
         - score
         - submitted_at
+        - code

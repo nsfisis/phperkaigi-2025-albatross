@@ -211,6 +211,8 @@ export interface components {
             score: number;
             /** @example 946684800 */
             submitted_at: number;
+            /** @example echo 'hello world'; */
+            code: string | null;
         };
     };
     responses: {

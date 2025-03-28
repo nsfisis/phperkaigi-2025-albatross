@@ -24,8 +24,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Dashboard() {
 	const { user, games } = useLoaderData<typeof loader>()!;
 
-	const isOnlineQualifyingOpen = new Date() < new Date(2025, 2, 21, 16, 30);
-
 	return (
 		<div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center gap-4">
 			{user.icon_path && (
@@ -36,23 +34,6 @@ export default function Dashboard() {
 				/>
 			)}
 			<h1 className="text-3xl font-bold text-gray-800">{user.display_name}</h1>
-			{isOnlineQualifyingOpen && (
-				<BorderedContainerWithCaption caption="オンライン予選開催中 (3/21 決勝当日まで)">
-					<p className="text-gray-900 max-w-prose">
-						現在オンライン予選を開催中です。
-						予選問題2問を両方解いたプレイヤーのうち合計スコアが最も小さい2名が、3/21
-						(金) の PHPerKaigi day0 に実施される決勝戦への進出枠を獲得します。
-						当日は、会場の Track A まで是非お越しください！
-					</p>
-					<p className="text-gray-600 max-w-prose">
-						※ 当日会場 Track A
-						にいらっしゃらない場合、次点のスコアを獲得されている方が自動的に決勝進出となります。
-					</p>
-					<p className="text-gray-600 max-w-prose">
-						※ 決勝に参加する予定のない方でも、プレイしていただくことは可能です。
-					</p>
-				</BorderedContainerWithCaption>
-			)}
 			<BorderedContainerWithCaption caption="試合一覧">
 				<div className="px-4">
 					{games.length === 0 ? (

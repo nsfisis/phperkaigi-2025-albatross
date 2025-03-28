@@ -253,6 +253,8 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 	}
 	ranking := make([]RankingEntry, len(rows))
 	for i, row := range rows {
+		// TODO: check if game is finished.
+		code := &row.Submission.Code
 		ranking[i] = RankingEntry{
 			Player: User{
 				UserID:      int(row.User.UserID),
@@ -264,6 +266,7 @@ func (h *Handler) GetGameWatchRanking(ctx context.Context, request GetGameWatchR
 			},
 			Score:       int(row.Submission.CodeSize),
 			SubmittedAt: row.Submission.CreatedAt.Time.Unix(),
+			Code:        toNullable(code),
 		}
 	}
 	return GetGameWatchRanking200JSONResponse{
