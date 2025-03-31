@@ -33,7 +33,7 @@ export default function RankingTable() {
 	const ranking = useAtomValue(rankingAtom);
 
 	return (
-		<div className="overflow-hidden border-2 border-blue-600 rounded-xl">
+		<div className="overflow-x-auto border-2 border-blue-600 rounded-xl">
 			<table className="min-w-full divide-y divide-gray-400 border-collapse">
 				<thead className="bg-gray-50">
 					<tr>
