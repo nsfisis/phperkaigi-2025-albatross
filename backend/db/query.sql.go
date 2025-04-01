@@ -496,6 +496,35 @@ func (q *Queries) ListAllGames(ctx context.Context) ([]Game, error) {
 	return items, nil
 }
 
+const listGameStateIDs = `-- name: ListGameStateIDs :many
+SELECT game_id, user_id FROM game_states
+`
+
+type ListGameStateIDsRow struct {
+	GameID int32
+	UserID int32
+}
+
+func (q *Queries) ListGameStateIDs(ctx context.Context) ([]ListGameStateIDsRow, error) {
+	rows, err := q.db.Query(ctx, listGameStateIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListGameStateIDsRow
+	for rows.Next() {
+		var i ListGameStateIDsRow
+		if err := rows.Scan(&i.GameID, &i.UserID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listMainPlayers = `-- name: ListMainPlayers :many
 SELECT game_id, game_main_players.user_id, users.user_id, username, display_name, icon_path, is_admin, label, created_at FROM game_main_players
 JOIN users ON game_main_players.user_id = users.user_id
@@ -593,6 +622,30 @@ func (q *Queries) ListPublicGames(ctx context.Context) ([]ListPublicGamesRow, er
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listSubmissionIDs = `-- name: ListSubmissionIDs :many
+SELECT submission_id FROM submissions
+`
+
+func (q *Queries) ListSubmissionIDs(ctx context.Context) ([]int32, error) {
+	rows, err := q.db.Query(ctx, listSubmissionIDs)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var submission_id int32
+		if err := rows.Scan(&submission_id); err != nil {
+			return nil, err
+		}
+		items = append(items, submission_id)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

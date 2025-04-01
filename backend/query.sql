@@ -188,3 +188,9 @@ SET best_score_submission_id = (
     LIMIT 1
 )
 WHERE game_id = $1 AND user_id = $2;
+
+-- name: ListSubmissionIDs :many
+SELECT submission_id FROM submissions;
+
+-- name: ListGameStateIDs :many
+SELECT game_id, user_id FROM game_states;
