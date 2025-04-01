@@ -29,15 +29,17 @@ func (q *Queries) AddMainPlayer(ctx context.Context, arg AddMainPlayerParams) er
 const aggregateTestcaseResults = `-- name: AggregateTestcaseResults :one
 SELECT
     CASE
-        WHEN COUNT(CASE WHEN r.status IS NULL            THEN 1 END) > 0 THEN 'running'
+        WHEN COUNT(*) < (SELECT COUNT(*) FROM testcases WHERE problem_id =
+                         (SELECT problem_id FROM games WHERE game_id =
+                          (SELECT game_id FROM submissions AS s WHERE s.submission_id = $1)))
+        THEN 'running'
         WHEN COUNT(CASE WHEN r.status = 'internal_error' THEN 1 END) > 0 THEN 'internal_error'
         WHEN COUNT(CASE WHEN r.status = 'timeout'        THEN 1 END) > 0 THEN 'timeout'
         WHEN COUNT(CASE WHEN r.status = 'runtime_error'  THEN 1 END) > 0 THEN 'runtime_error'
         WHEN COUNT(CASE WHEN r.status = 'wrong_answer'   THEN 1 END) > 0 THEN 'wrong_answer'
         ELSE 'success'
     END AS status
-FROM testcases
-LEFT JOIN testcase_results AS r ON testcases.testcase_id = r.testcase_id
+FROM testcase_results AS r
 WHERE r.submission_id = $1
 `
 
