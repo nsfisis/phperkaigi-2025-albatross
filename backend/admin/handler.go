@@ -464,5 +464,5 @@ func (h *Handler) postFix(c echo.Context) error {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 	}
-	return c.Redirect(http.StatusSeeOther, basePath+"/admin")
+	return c.Redirect(http.StatusSeeOther, basePath+"/admin/dashboard")
 }
