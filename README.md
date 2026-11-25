@@ -5,7 +5,12 @@
 
 2025-03-21 から 2025-03-23 にかけて開催された [PHPerKaigi 2025](https://phperkaigi.jp/2025/) の中の企画、PHPer コードバトルのシステムです。
 
-[サイトはこちら (現在は新規にプレイすることはできません)](https://t.nil.ninja/phperkaigi/2025/code-battle/)
+現在は回答を締め切っていますが、コードゴルフの問題や開催中の参加者の方々の回答は、以下のページから確認できます。
+
+https://t.nil.ninja/phperkaigi/2025/code-battle/
+
+> [!NOTE]
+> 現在はアーカイブされた静的ファイルがサーブされています: https://github.com/nsfisis/phperkaigi-2025-albatross-archive
 
 
 # サンドボックス化の仕組み
