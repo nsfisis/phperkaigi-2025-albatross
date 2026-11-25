@@ -255,6 +255,7 @@ export interface components {
     };
     parameters: {
         header_authorization: string;
+        header_authorization_optional: string;
         path_game_id: number;
     };
     requestBodies: never;
@@ -299,8 +300,8 @@ export interface operations {
     getGames: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: components["parameters"]["header_authorization"];
+            header?: {
+                Authorization?: components["parameters"]["header_authorization_optional"];
             };
             path?: never;
             cookie?: never;
@@ -325,8 +326,8 @@ export interface operations {
     getGame: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: components["parameters"]["header_authorization"];
+            header?: {
+                Authorization?: components["parameters"]["header_authorization_optional"];
             };
             path: {
                 game_id: components["parameters"]["path_game_id"];
@@ -447,8 +448,8 @@ export interface operations {
     getGameWatchRanking: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: components["parameters"]["header_authorization"];
+            header?: {
+                Authorization?: components["parameters"]["header_authorization_optional"];
             };
             path: {
                 game_id: components["parameters"]["path_game_id"];
@@ -476,8 +477,8 @@ export interface operations {
     getGameWatchLatestStates: {
         parameters: {
             query?: never;
-            header: {
-                Authorization: components["parameters"]["header_authorization"];
+            header?: {
+                Authorization?: components["parameters"]["header_authorization_optional"];
             };
             path: {
                 game_id: components["parameters"]["path_game_id"];

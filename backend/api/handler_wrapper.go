@@ -40,13 +40,9 @@ func parseJWTClaimsFromAuthorizationHeader(authorization string) (*auth.JWTClaim
 }
 
 func (h *HandlerWrapper) GetGame(ctx context.Context, request GetGameRequestObject) (GetGameResponseObject, error) {
-	user, err := parseJWTClaimsFromAuthorizationHeader(request.Params.Authorization)
-	if err != nil {
-		return GetGame401JSONResponse{
-			UnauthorizedJSONResponse: UnauthorizedJSONResponse{
-				Message: "Unauthorized",
-			},
-		}, nil
+	var user *auth.JWTClaims
+	if request.Params.Authorization != nil {
+		user, _ = parseJWTClaimsFromAuthorizationHeader(*request.Params.Authorization)
 	}
 	return h.impl.GetGame(ctx, request, user)
 }
@@ -64,37 +60,25 @@ func (h *HandlerWrapper) GetGamePlayLatestState(ctx context.Context, request Get
 }
 
 func (h *HandlerWrapper) GetGameWatchLatestStates(ctx context.Context, request GetGameWatchLatestStatesRequestObject) (GetGameWatchLatestStatesResponseObject, error) {
-	user, err := parseJWTClaimsFromAuthorizationHeader(request.Params.Authorization)
-	if err != nil {
-		return GetGameWatchLatestStates401JSONResponse{
-			UnauthorizedJSONResponse: UnauthorizedJSONResponse{
-				Message: "Unauthorized",
-			},
-		}, nil
+	var user *auth.JWTClaims
+	if request.Params.Authorization != nil {
+		user, _ = parseJWTClaimsFromAuthorizationHeader(*request.Params.Authorization)
 	}
 	return h.impl.GetGameWatchLatestStates(ctx, request, user)
 }
 
 func (h *HandlerWrapper) GetGameWatchRanking(ctx context.Context, request GetGameWatchRankingRequestObject) (GetGameWatchRankingResponseObject, error) {
-	user, err := parseJWTClaimsFromAuthorizationHeader(request.Params.Authorization)
-	if err != nil {
-		return GetGameWatchRanking401JSONResponse{
-			UnauthorizedJSONResponse: UnauthorizedJSONResponse{
-				Message: "Unauthorized",
-			},
-		}, nil
+	var user *auth.JWTClaims
+	if request.Params.Authorization != nil {
+		user, _ = parseJWTClaimsFromAuthorizationHeader(*request.Params.Authorization)
 	}
 	return h.impl.GetGameWatchRanking(ctx, request, user)
 }
 
 func (h *HandlerWrapper) GetGames(ctx context.Context, request GetGamesRequestObject) (GetGamesResponseObject, error) {
-	user, err := parseJWTClaimsFromAuthorizationHeader(request.Params.Authorization)
-	if err != nil {
-		return GetGames401JSONResponse{
-			UnauthorizedJSONResponse: UnauthorizedJSONResponse{
-				Message: "Unauthorized",
-			},
-		}, nil
+	var user *auth.JWTClaims
+	if request.Params.Authorization != nil {
+		user, _ = parseJWTClaimsFromAuthorizationHeader(*request.Params.Authorization)
 	}
 	return h.impl.GetGames(ctx, request, user)
 }

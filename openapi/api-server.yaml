@@ -43,7 +43,7 @@ paths:
       operationId: getGames
       summary: List games
       parameters:
-        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/header_authorization_optional'
       responses:
         '200':
           description: List of games
@@ -67,7 +67,7 @@ paths:
       operationId: getGame
       summary: Get a game
       parameters:
-        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/header_authorization_optional'
         - $ref: '#/components/parameters/path_game_id'
       responses:
         '200':
@@ -173,7 +173,7 @@ paths:
       operationId: getGameWatchRanking
       summary: Get the latest player ranking
       parameters:
-        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/header_authorization_optional'
         - $ref: '#/components/parameters/path_game_id'
       responses:
         '200':
@@ -200,7 +200,7 @@ paths:
       operationId: getGameWatchLatestStates
       summary: Get all the latest game states of the main players
       parameters:
-        - $ref: '#/components/parameters/header_authorization'
+        - $ref: '#/components/parameters/header_authorization_optional'
         - $ref: '#/components/parameters/path_game_id'
       responses:
         '200':
@@ -230,6 +230,12 @@ components:
       schema:
         type: string
       required: true
+    header_authorization_optional:
+      in: header
+      name: Authorization
+      schema:
+        type: string
+      required: false
     path_game_id:
       in: path
       name: game_id

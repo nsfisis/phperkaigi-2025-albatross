@@ -230,7 +230,7 @@ func (h *Handler) GetGameWatchLatestStates(ctx context.Context, request GetGameW
 			Status:               status,
 		}
 
-		if int(row.UserID) == user.UserID && !user.IsAdmin {
+		if user != nil && int(row.UserID) == user.UserID && !user.IsAdmin {
 			return GetGameWatchLatestStates403JSONResponse{
 				ForbiddenJSONResponse: ForbiddenJSONResponse{
 					Message: "You are one of the main players of this game",
